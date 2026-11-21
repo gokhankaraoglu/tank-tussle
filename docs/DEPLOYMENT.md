@@ -13,6 +13,11 @@ The server and the client deploy separately, both **from the repository root**:
 which are npm workspaces, not published packages. Pointing a host at `apps/server` or
 `apps/client` alone breaks the install. Both configs therefore build from the root and compile
 the shared packages first (`npm run build:packages`) — their `dist/` folders are not committed.
+**Change dependencies with Node 22 (npm 10).** Render and Netlify run Node 22, whose npm 10
+rejects a `package-lock.json` written by npm 11 (Node 24+) with "package.json and
+package-lock.json are not in sync". On a newer Node, refresh the lock with
+`npx npm@10 install --package-lock-only` before committing.
+
 The server build installs only the server's workspaces (`npm ci -w …`), so Render does not
 download the web client's and the mobile app's dependencies.
 

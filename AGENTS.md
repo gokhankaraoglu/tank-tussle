@@ -35,6 +35,9 @@ npm run typecheck
 npm run lint
 ```
 
+Use Node 22 (`.nvmrc`) when adding or updating dependencies: the hosts run npm 10, which
+rejects a lock file written by npm 11 (`npx npm@10 install --package-lock-only` fixes it).
+
 Shared packages are consumed from `dist/` by the server. `npm run dev` rebuilds them on change
 and restarts the server; outside `dev`, run `npm run build:packages` after changing them (the
 root `test` and `typecheck` scripts do this for you). Bump `PROTOCOL_VERSION` whenever events or
