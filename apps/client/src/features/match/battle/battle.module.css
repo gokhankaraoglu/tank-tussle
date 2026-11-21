@@ -109,10 +109,10 @@
   left: 50%;
   z-index: 5;
   padding: 10px 18px;
-  border: 1px solid #ffd84f;
+  border: 1px solid var(--warning);
   border-radius: 999px;
   background: rgba(7, 11, 29, 0.92);
-  color: #ffd84f;
+  color: var(--warning);
   font-weight: 600;
   transform: translateX(-50%);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);

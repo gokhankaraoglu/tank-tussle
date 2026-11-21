@@ -1,8 +1,11 @@
 import { fileURLToPath } from 'node:url'
+import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vitest/config'
+import type { Plugin } from 'vite'
+import { themeCss, tokens } from '@tank-tussle/client-core/theme'
 
 const packageSource = (name: string): string =>
   fileURLToPath(new URL(`../../packages/${name}/src/index.ts`, import.meta.url))
@@ -17,6 +20,19 @@ const assertServerUrl = (mode: string): void => {
   if (process.env.CI) throw new Error(message)
   console.warn(`\n⚠  ${message}\n`)
 }
+
+const THEME_MODULE = 'virtual:theme.css'
+
+/**
+ * Turns the shared design tokens into a real stylesheet at build time (no flash of unstyled
+ * page while JavaScript loads) and fills the theme colour into index.html.
+ */
+const theme = (): Plugin => ({
+  name: 'tank-tussle-theme',
+  resolveId: (id) => (id === THEME_MODULE ? `\0${THEME_MODULE}` : undefined),
+  load: (id) => (id === `\0${THEME_MODULE}` ? themeCss() : undefined),
+  transformIndexHtml: (html) => html.replaceAll('%THEME_COLOR%', tokens.color.background),
+})
 
 /**
  * Installable web app: home-screen icon, full screen in landscape, and offline play for the
@@ -37,8 +53,8 @@ const pwa = VitePWA({
     display: 'fullscreen',
     display_override: ['fullscreen', 'standalone'],
     orientation: 'landscape',
-    background_color: '#070b1d',
-    theme_color: '#070b1d',
+    background_color: tokens.color.background,
+    theme_color: tokens.color.background,
     categories: ['games'],
     icons: [
       { src: 'icons/icon-192.png', sizes: '192x192', type: 'image/png' },
@@ -57,7 +73,7 @@ const pwa = VitePWA({
 export default defineConfig(({ mode }) => {
   assertServerUrl(mode)
   return {
-    plugins: [react(), ...(process.env.VITEST ? [] : [pwa])],
+    plugins: [react(), tailwindcss(), theme(), ...(process.env.VITEST ? [] : [pwa])],
     resolve: {
       // The React Native app pins another React; the web bundle must contain exactly one.
       dedupe: ['react', 'react-dom'],

@@ -12,7 +12,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import { colors, radius, space } from '../theme'
+import { colors, radius, space, withAlpha } from '../theme'
 
 export interface ChatPlayer {
   readonly name: string
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    backgroundColor: colors.scrim,
   },
   window: {
     width: '92%',
@@ -259,7 +259,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: colors.card,
   },
-  own: { alignSelf: 'flex-end', alignItems: 'flex-end', backgroundColor: '#1e3557' },
+  own: {
+    alignSelf: 'flex-end',
+    alignItems: 'flex-end',
+    backgroundColor: withAlpha(colors.secondary, 0.18),
+  },
   author: { fontSize: 11, fontWeight: '700' },
   text: { color: colors.text },
   form: {

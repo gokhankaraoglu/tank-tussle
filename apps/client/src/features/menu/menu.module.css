@@ -100,7 +100,7 @@
   border: 0;
   border-radius: var(--radius);
   background: linear-gradient(160deg, var(--accent), var(--accent-strong));
-  color: #1b1020;
+  color: var(--on-accent);
   cursor: pointer;
   transition:
     transform 150ms ease,

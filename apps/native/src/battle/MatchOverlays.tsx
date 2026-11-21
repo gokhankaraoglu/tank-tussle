@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     left: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(3, 5, 15, 0.72)',
+    backgroundColor: colors.scrim,
   },
   dialog: {
     minWidth: 300,

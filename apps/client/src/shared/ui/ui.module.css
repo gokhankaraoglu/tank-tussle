@@ -5,8 +5,10 @@
   align-items: center;
   justify-content: center;
   gap: 28px;
+  /* The bottom keeps clear of the floating buttons (sound bottom-right, chat bottom-left), so
+     the last button on a long page can always be reached. */
   padding: max(32px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
-    max(32px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    calc(76px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
 }
 
 /* Phones held sideways have very little height: tighten everything up. */
@@ -14,7 +16,7 @@
   .screen {
     gap: 12px;
     padding-top: max(10px, env(safe-area-inset-top));
-    padding-bottom: max(10px, env(safe-area-inset-bottom));
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
   }
 
   .title {
@@ -97,7 +99,7 @@
 .primary {
   border-color: transparent;
   background: linear-gradient(180deg, var(--accent-strong), var(--accent));
-  color: #1a0d05;
+  color: var(--on-accent);
 }
 
 @media (hover: hover) {

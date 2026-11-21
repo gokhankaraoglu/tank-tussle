@@ -25,7 +25,7 @@ import {
 } from 'react-native'
 import { createPictureLayer } from '../platform/picture-layer'
 import { SkiaCanvas2D } from '../platform/skia-canvas'
-import { colors, radius } from '../theme'
+import { colors, radius, withAlpha } from '../theme'
 
 interface BattlefieldProps {
   readonly snapshot: SessionSnapshot
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 999,
     overflow: 'hidden',
-    backgroundColor: 'rgba(7, 11, 29, 0.8)',
+    backgroundColor: withAlpha(colors.background, 0.8),
     color: colors.text,
     fontSize: 12,
     fontWeight: '700',

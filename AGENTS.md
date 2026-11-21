@@ -78,5 +78,13 @@ The client aliases them to `src/` for hot reload.
    behind the `PHONE_SCREEN` media query; shell-only behaviour goes through `shared/platform.ts`.
    Every screen must work on a 667×320 landscape and a 360×640 portrait viewport, respect
    safe-area insets, and keep hover styles inside `@media (hover: hover)`.
-10. Style: 2 spaces, no semicolons, single quotes, 100 columns (Prettier). Files under ~300 lines.
-11. Every bug fix or rule change comes with a test next to the code (`*.test.ts`).
+10. **One look, one source.** Colours, radii, spacing and fonts live in
+    `packages/client-core/src/theme/tokens.ts`. The web gets them as CSS variables (generated in
+    `apps/client/vite.config.ts`), the native app through `apps/native/src/theme.ts`. Never hard-code
+    a colour in a stylesheet or component.
+    Tailwind (v4, web only) is being introduced gradually next to the CSS Modules: its palette is
+    limited to the tokens (`apps/client/src/shared/tailwind.css`, classes like `bg-elevated`,
+    `text-muted`, `border-line`) and its reset is off. New small components may use it;
+    `ConnectionPill` is the first.
+11. Style: 2 spaces, no semicolons, single quotes, 100 columns (Prettier). Files under ~300 lines.
+12. Every bug fix or rule change comes with a test next to the code (`*.test.ts`).

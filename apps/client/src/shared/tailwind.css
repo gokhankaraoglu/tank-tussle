@@ -1,0 +1,47 @@
+/*
+ * Tailwind, introduced gradually next to the CSS Modules. Its reset (preflight) is left out so
+ * existing screens keep their look; only the theme and the utilities are loaded.
+ *
+ * Every colour, radius and font points at the shared design tokens (CSS variables generated from
+ * packages/client-core/src/theme/tokens.ts). The default palette is removed, so a class like
+ * `bg-red-500` does not exist: only the game's own colours can be used.
+ *
+ * Names differ from the token variables on purpose (`--color-page`, not `--bg`): a theme variable
+ * pointing at a variable of the same name would reference itself.
+ */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme inline {
+  --color-*: initial;
+  --color-page: var(--bg);
+  --color-page-deep: var(--bg-deep);
+  --color-page-glow: var(--bg-glow);
+  --color-elevated: var(--bg-elevated);
+  --color-card: var(--bg-card);
+  --color-line: var(--border);
+  --color-fg: var(--text);
+  --color-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --color-on-accent: var(--on-accent);
+  --color-secondary: var(--accent-2);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+
+  --radius-card: var(--radius);
+  --radius-control: var(--radius-sm);
+
+  --font-heading: var(--font-display);
+  --font-sans: var(--font-body);
+
+  --animate-blink: blink 1s ease-in-out infinite;
+
+  @keyframes blink {
+    50% {
+      opacity: 0.4;
+    }
+  }
+}

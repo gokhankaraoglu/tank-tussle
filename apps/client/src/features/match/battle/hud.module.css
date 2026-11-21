@@ -307,7 +307,7 @@
 
 .arsenalItem[data-state='selected'] .badge {
   background: var(--tank-color);
-  color: #10131f;
+  color: var(--on-accent);
 }
 
 .emptyIcon {

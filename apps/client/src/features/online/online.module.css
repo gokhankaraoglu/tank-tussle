@@ -21,41 +21,6 @@
   box-shadow: 0 0 10px currentColor;
 }
 
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  background: var(--bg-elevated);
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--text-muted);
-}
-
-.pill[data-status='connected'] .dot {
-  background: var(--success);
-  box-shadow: 0 0 8px var(--success);
-}
-
-.pill[data-status='reconnecting'] .dot,
-.pill[data-status='connecting'] .dot {
-  background: #ffd84f;
-  animation: blink 1s ease-in-out infinite;
-}
-
-.pill[data-status='offline'] .dot {
-  background: var(--danger);
-}
-
 .hub {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -248,7 +213,7 @@
 }
 
 .seatState[data-connected='false'] {
-  color: #ffd84f;
+  color: var(--warning);
 }
 
 .pulse {
@@ -263,8 +228,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .pulse,
-  .pill .dot {
+  .pulse {
     animation: none;
   }
 }

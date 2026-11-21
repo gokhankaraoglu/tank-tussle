@@ -37,6 +37,7 @@ Everything a client needs that is not a view, with no DOM or React Native import
 | `render/`  | `BattleStage` (snapshot → scene), `ShotPlayback`, `SceneRenderer` and its painters            |
 | `audio/`   | `AudioService` interface, settings store, sound catalog, event → sound mapping                |
 | `react/`   | Platform-free hooks (`useRoom`, `useOpenRooms`, `useSessionSnapshot`, …)                      |
+| `theme/`   | Design tokens (colours, radii, spacing, fonts) shared by the web and the native app           |
 | `storage/` | `KeyValueStorage`, the synchronous storage the stores are written against                     |
 | `ads/`     | `AdService` interface and the `MatchAdBreaks` policy (see [MONETIZATION.md](MONETIZATION.md)) |
 

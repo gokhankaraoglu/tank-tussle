@@ -2,7 +2,7 @@ import { AIM_STEPS, roundAim } from '@tank-tussle/client-core'
 import { comboMultiplier, TANK, type MatchState, type PlayerIndex } from '@tank-tussle/game-core'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { holdAcceleration, useClickSound, useHoldRepeat } from '../app/hooks'
-import { colors, radius, space } from '../theme'
+import { colors, radius, space, withAlpha } from '../theme'
 
 interface AimStepperProps {
   readonly label: string
@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     borderRadius: radius.small,
     borderWidth: 2,
     borderColor: colors.secondary,
-    backgroundColor: 'rgba(111, 211, 255, 0.14)',
+    backgroundColor: withAlpha(colors.secondary, 0.14),
   },
   moveIcon: { color: colors.text, fontSize: 15 },
   pips: { flexDirection: 'row', justifyContent: 'center', gap: 5 },

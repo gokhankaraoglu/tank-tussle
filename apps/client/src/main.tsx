@@ -9,6 +9,8 @@ import '@fontsource/audiowide/400.css'
 import '@fontsource/exo-2/400.css'
 import '@fontsource/exo-2/600.css'
 import '@fontsource/exo-2/700.css'
+import 'virtual:theme.css'
+import './shared/tailwind.css'
 import './shared/global.css'
 
 const root = document.getElementById('root')

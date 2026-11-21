@@ -1,19 +1,6 @@
+/* Colours, radii, spacing and fonts come from the shared design tokens
+   (packages/client-core/src/theme/tokens.ts), injected as CSS variables by vite.config.ts. */
 :root {
-  --bg: #070b1d;
-  --bg-elevated: #10163a;
-  --bg-card: #161e4a;
-  --border: #2a3577;
-  --text: #e9ecff;
-  --text-muted: #9aa3d6;
-  --accent: #ff7849;
-  --accent-strong: #ff9a6e;
-  --accent-2: #3ddcff;
-  --danger: #ff5e7a;
-  --success: #6dff9e;
-  --radius: 14px;
-  --radius-sm: 8px;
-  --font-display: 'Audiowide', system-ui, sans-serif;
-  --font-body: 'Exo 2', system-ui, sans-serif;
   color-scheme: dark;
 }
 
@@ -34,9 +21,13 @@ body {
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-text-size-adjust: 100%;
+  /* Painted once, one screen tall. Pages longer than the screen (the ladder on a phone) must not
+     repeat it, or the top glow shows up again behind the last button; below the first screen
+     the deep colour the gradient ends with simply continues. */
   background:
-    radial-gradient(ellipse at top, #1b2470 0%, transparent 60%),
-    linear-gradient(180deg, var(--bg) 0%, #03050f 100%);
+    radial-gradient(ellipse at top, var(--bg-glow) 0%, transparent 60%) no-repeat,
+    linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%) no-repeat;
+  background-color: var(--bg-deep);
   color: var(--text);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
