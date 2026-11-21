@@ -20,6 +20,7 @@ import {
 import { useBattleKeys } from './battle/use-battle-controls.js'
 import { WideBattle } from './battle/WideBattle.js'
 import { WeaponShop } from './shop/WeaponShop.js'
+import { ChatPanel } from '../chat/ChatPanel.js'
 
 interface MatchScreenProps {
   readonly session: GameSession
@@ -82,6 +83,8 @@ export const MatchScreen = ({ session, onExit }: MatchScreenProps) => {
           onLeave={() => setConfirmingExit(true)}
         />
       )}
+
+      {session.chat && <ChatPanel chat={session.chat} players={[state.tanks[0], state.tanks[1]]} />}
 
       <MatchOverlays
         snapshot={snapshot}

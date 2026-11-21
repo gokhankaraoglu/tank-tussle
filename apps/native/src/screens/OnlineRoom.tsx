@@ -13,6 +13,7 @@ import * as Clipboard from 'expo-clipboard'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Text, View } from 'react-native'
 import { useDependencies } from '../app/dependencies'
+import { ChatPanel } from '../chat/ChatPanel'
 import { Button } from '../ui/Button'
 import { ErrorText, Muted, Panel, Screen } from '../ui/Screen'
 import { ConnectionPill, styles } from './online-parts'
@@ -98,47 +99,50 @@ export const WaitingRoom = ({
   }
 
   return (
-    <Screen title={roomTitle(isHost, autoHost)}>
-      <Panel>
-        <View style={styles.toolbar}>
-          <Muted>
-            {room.settings.visibility === 'public' ? 'Public' : 'Private'} ·{' '}
-            {room.settings.weaponsPerPlayer} weapons each
-          </Muted>
-          <ConnectionPill status={status} />
-        </View>
+    <View style={{ flex: 1 }}>
+      <Screen title={roomTitle(isHost, autoHost)}>
+        <Panel>
+          <View style={styles.toolbar}>
+            <Muted>
+              {room.settings.visibility === 'public' ? 'Public' : 'Private'} ·{' '}
+              {room.settings.weaponsPerPlayer} weapons each
+            </Muted>
+            <ConnectionPill status={status} />
+          </View>
 
-        <RoomCode code={code} />
+          <RoomCode code={code} />
 
-        <View style={styles.seats}>
-          <SeatCard role="Host" seat={room.host} isYou={isHost} />
-          <Text style={styles.versus}>VS</Text>
-          <SeatCard role="Guest" seat={room.guest} isYou={!isHost} />
-        </View>
+          <View style={styles.seats}>
+            <SeatCard role="Host" seat={room.host} isYou={isHost} />
+            <Text style={styles.versus}>VS</Text>
+            <SeatCard role="Guest" seat={room.guest} isYou={!isHost} />
+          </View>
 
-        <ErrorText>{error}</ErrorText>
-        <View style={styles.actions}>
-          <Button
-            variant="ghost"
-            onPress={() => {
-              connection.leaveRoom()
-              onLeave()
-            }}
-          >
-            {isHost ? 'Close game' : 'Leave'}
-          </Button>
-          {autoHost ? (
-            <QuickMatchNotice secondsLeft={secondsLeft} />
-          ) : isHost ? (
-            <Button variant="primary" disabled={!canStart} onPress={() => void start()}>
-              Start match
+          <ErrorText>{error}</ErrorText>
+          <View style={styles.actions}>
+            <Button
+              variant="ghost"
+              onPress={() => {
+                connection.leaveRoom()
+                onLeave()
+              }}
+            >
+              {isHost ? 'Close game' : 'Leave'}
             </Button>
-          ) : (
-            <Muted>Waiting for the host to start…</Muted>
-          )}
-        </View>
-      </Panel>
-    </Screen>
+            {autoHost ? (
+              <QuickMatchNotice secondsLeft={secondsLeft} />
+            ) : isHost ? (
+              <Button variant="primary" disabled={!canStart} onPress={() => void start()}>
+                Start match
+              </Button>
+            ) : (
+              <Muted>Waiting for the host to start…</Muted>
+            )}
+          </View>
+        </Panel>
+      </Screen>
+      <ChatPanel chat={connection.chat} players={[room.host, room.guest]} />
+    </View>
   )
 }
 

@@ -18,6 +18,7 @@ import { useMusic, useShotSounds } from '../app/hooks'
 import { colors, radius, space } from '../theme'
 import { Button } from '../ui/Button'
 import { SoundToggles } from '../ui/SoundToggles'
+import { ChatPanel } from '../chat/ChatPanel'
 import { Battlefield } from './Battlefield'
 import { AimStepper, MoveControl, PlayerCard } from './controls'
 import { MatchOverlays } from './MatchOverlays'
@@ -134,6 +135,8 @@ export const MatchScreen = ({ session, onExit }: MatchScreenProps) => {
           onLeave={() => setConfirmingExit(true)}
         />
       )}
+
+      {session.chat && <ChatPanel chat={session.chat} players={[state.tanks[0], state.tanks[1]]} />}
 
       <MatchOverlays
         snapshot={snapshot}

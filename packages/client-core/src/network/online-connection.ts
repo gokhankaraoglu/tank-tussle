@@ -10,6 +10,7 @@ import {
   type RoomSettings,
   type RoomSummary,
 } from '@tank-tussle/protocol'
+import { ChatChannel } from './chat-channel.js'
 import type { CredentialsStore } from './credentials-store.js'
 import type { GameSocket } from './game-socket.js'
 import { Listeners } from './listeners.js'
@@ -35,11 +36,14 @@ export class OnlineConnection {
    * the moment the guest sits down), before anyone listens for it. It is kept until taken.
    */
   private startedMatch: MatchStartedPayload | null = null
+  /** Chat of the room this connection is seated in. */
+  readonly chat: ChatChannel
 
   constructor(
     readonly socket: GameSocket,
     private readonly credentials: CredentialsStore,
   ) {
+    this.chat = new ChatChannel(socket)
     socket.on('connect', () => void this.handleConnect())
     socket.on('disconnect', () => this.setStatus('reconnecting'))
     socket.on('connect_error', (error) => this.handleConnectError(error))
@@ -90,6 +94,7 @@ export class OnlineConnection {
 
   leaveRoom(): void {
     this.startedMatch = null
+    this.chat.leaveRoom()
     this.credentials.clear()
     this.socket.emit(ClientEvent.LeaveRoom)
   }
@@ -107,6 +112,7 @@ export class OnlineConnection {
       this.credentials.clear()
       return { ok: false, error: reply.error }
     }
+    this.chat.rejoin(reply.data.you)
     return { ok: true, payload: reply.data }
   }
 
@@ -135,7 +141,10 @@ export class OnlineConnection {
   }
 
   private remember(reply: Ack<RoomJoinedPayload>): Ack<RoomJoinedPayload> {
-    if (reply.ok) this.credentials.save(reply.data.credentials)
+    if (reply.ok) {
+      this.credentials.save(reply.data.credentials)
+      this.chat.enterRoom(reply.data.you)
+    }
     return reply
   }
 

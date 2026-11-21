@@ -34,6 +34,7 @@ export interface LocalSessionOptions {
 
 /** Runs the rules in the browser: hot-seat, vs CPU and practice. */
 export class LocalGameSession implements GameSession {
+  readonly chat = null
   private readonly store: SessionStore
   private readonly scheduler: Scheduler
   private readonly seedSource: () => number

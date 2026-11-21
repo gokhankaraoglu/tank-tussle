@@ -11,6 +11,7 @@ import { Button } from '../../shared/ui/Button.js'
 import { Panel, Screen } from '../../shared/ui/Screen.js'
 import { ErrorText } from '../../shared/ui/TextField.js'
 import { ConnectionPill } from './ConnectionPill.js'
+import { ChatPanel } from '../chat/ChatPanel.js'
 import { SeatCard } from './SeatCard.js'
 import { useConnectionStatus } from '@tank-tussle/client-core'
 import { useRoom } from '@tank-tussle/client-core'
@@ -74,40 +75,43 @@ export const WaitingRoom = ({
   }
 
   return (
-    <Screen title={roomTitle(isHost, autoHost)}>
-      <Panel>
-        <div className={styles.room}>
-          <div className={styles.toolbar}>
-            <RoomChips room={room} />
-            <ConnectionPill status={status} />
-          </div>
+    <>
+      <Screen title={roomTitle(isHost, autoHost)}>
+        <Panel>
+          <div className={styles.room}>
+            <div className={styles.toolbar}>
+              <RoomChips room={room} />
+              <ConnectionPill status={status} />
+            </div>
 
-          <RoomCode code={code} link={inviteLink(room.id)} />
+            <RoomCode code={code} link={inviteLink(room.id)} />
 
-          <div className={styles.seats}>
-            <SeatCard role="Host" seat={room.host} isYou={isHost} />
-            <span className={styles.versus}>VS</span>
-            <SeatCard role="Guest" seat={room.guest} isYou={!isHost} />
-          </div>
+            <div className={styles.seats}>
+              <SeatCard role="Host" seat={room.host} isYou={isHost} />
+              <span className={styles.versus}>VS</span>
+              <SeatCard role="Guest" seat={room.guest} isYou={!isHost} />
+            </div>
 
-          <ErrorText>{error}</ErrorText>
-          <div className={styles.actions}>
-            <Button variant="ghost" onClick={leave}>
-              {isHost ? 'Close game' : 'Leave'}
-            </Button>
-            {autoHost ? (
-              <QuickMatchNotice secondsLeft={secondsLeft} />
-            ) : isHost ? (
-              <Button variant="primary" large disabled={!canStart} onClick={() => void start()}>
-                Start match
+            <ErrorText>{error}</ErrorText>
+            <div className={styles.actions}>
+              <Button variant="ghost" onClick={leave}>
+                {isHost ? 'Close game' : 'Leave'}
               </Button>
-            ) : (
-              <span className={styles.pulse}>Waiting for the host to start…</span>
-            )}
+              {autoHost ? (
+                <QuickMatchNotice secondsLeft={secondsLeft} />
+              ) : isHost ? (
+                <Button variant="primary" large disabled={!canStart} onClick={() => void start()}>
+                  Start match
+                </Button>
+              ) : (
+                <span className={styles.pulse}>Waiting for the host to start…</span>
+              )}
+            </div>
           </div>
-        </div>
-      </Panel>
-    </Screen>
+        </Panel>
+      </Screen>
+      <ChatPanel chat={connection.chat} players={[room.host, room.guest]} />
+    </>
   )
 }
 

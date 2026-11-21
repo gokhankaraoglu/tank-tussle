@@ -114,6 +114,10 @@ MatchGateway ── pick / aim / move / fire / rematch
   (env driven).
 - `ConnectionGuardGateway` admits connections (protocol version, per-address and total caps)
   and rate-limits each socket's messages; `RoomsService` caps the number of rooms.
+- `ChatGateway` relays chat lines inside a room: validated (`parseChatSend`), profanity
+  masked (`chat/profanity.ts`), rate-limited, kept briefly in memory (`ChatHistory`) so a report
+  quotes the real text. On the client the chat lives on `OnlineConnection.chat`
+  (`ChatChannel`), so the waiting-room conversation continues into the match; muting is local.
 - `GameEventLogger` writes one searchable line per important event (rooms, matches, seats,
   refused and throttled clients) without names or tokens. See [DEPLOYMENT.md](DEPLOYMENT.md).
 

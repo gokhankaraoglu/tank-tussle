@@ -1,3 +1,4 @@
+import type { ChatChannel } from '../network/chat-channel.js'
 import type {
   MatchState,
   MoveDirection,
@@ -44,6 +45,8 @@ export interface SessionSnapshot {
  * Local play and online play are interchangeable implementations.
  */
 export interface GameSession {
+  /** Chat with the opponent; null when there is nobody to talk to (local play). */
+  readonly chat: ChatChannel | null
   getSnapshot(): SessionSnapshot
   subscribe(listener: () => void): () => void
   pick(poolIndex: number): void

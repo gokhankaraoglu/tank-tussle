@@ -14,12 +14,13 @@ import type {
   RoomSummary,
   RoomView,
 } from './rooms.js'
+import type { ChatMessage, ChatReportPayload, ChatSendPayload } from './chat.js'
 
 /**
  * Bumped whenever events or payload shapes change. Clients send it in the handshake and the
  * server refuses mismatches, so an outdated server can't feed a client state it can't draw.
  */
-export const PROTOCOL_VERSION = 7
+export const PROTOCOL_VERSION = 8
 
 /** Connection error message used when the versions differ. */
 export const PROTOCOL_MISMATCH = 'PROTOCOL_MISMATCH'
@@ -84,6 +85,8 @@ export const ClientEvent = {
   Move: 'match:move',
   Fire: 'match:fire',
   Rematch: 'match:rematch',
+  ChatSend: 'chat:send',
+  ChatReport: 'chat:report',
 } as const
 
 export const ServerEvent = {
@@ -95,6 +98,7 @@ export const ServerEvent = {
   Aimed: 'match:aimed',
   Shot: 'match:shot',
   RematchRequested: 'match:rematch-requested',
+  ChatMessage: 'chat:message',
 } as const
 
 export interface ClientToServerEvents {
@@ -117,6 +121,10 @@ export interface ClientToServerEvents {
   [ClientEvent.Move]: (payload: MovePayload, ack: (reply: Ack) => void) => void
   [ClientEvent.Fire]: (payload: FirePayload, ack: (reply: Ack) => void) => void
   [ClientEvent.Rematch]: () => void
+  /** A chat line for everyone in your room (waiting room or match). */
+  [ClientEvent.ChatSend]: (payload: ChatSendPayload, ack: (reply: Ack) => void) => void
+  /** Flags the opponent's message for review; it is written to the server log. */
+  [ClientEvent.ChatReport]: (payload: ChatReportPayload, ack: (reply: Ack) => void) => void
 }
 
 export interface ServerToClientEvents {
@@ -128,4 +136,5 @@ export interface ServerToClientEvents {
   [ServerEvent.Aimed]: (payload: AimPayload & { player: PlayerIndex }) => void
   [ServerEvent.Shot]: (payload: ShotPayload) => void
   [ServerEvent.RematchRequested]: (payload: { player: PlayerIndex }) => void
+  [ServerEvent.ChatMessage]: (message: ChatMessage) => void
 }

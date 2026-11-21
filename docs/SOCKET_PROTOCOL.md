@@ -43,20 +43,22 @@ grace timer, tells the room via `room:updated`, and returns the room plus the cu
 
 ## Client → Server
 
-| Event            | Payload                  | Ack                      | Effect                                                             |
-| ---------------- | ------------------------ | ------------------------ | ------------------------------------------------------------------ |
-| `lobby:list`     | —                        | `RoomSummary[]`          | Public, waiting rooms with an online host                          |
-| `lobby:create`   | `{ profile, settings }`  | `Ack<RoomJoinedPayload>` | Creates a room, you are the host (0)                               |
-| `lobby:join`     | `{ roomId, profile }`    | `Ack<RoomJoinedPayload>` | Takes the guest seat (1)                                           |
-| `lobby:leave`    | —                        | —                        | Leaves deliberately (see lifecycle)                                |
-| `room:start`     | —                        | `Ack`                    | Host only, guest must be connected                                 |
-| `session:resume` | `{ token }`              | `Ack<ResumePayload>`     | Reclaims a seat                                                    |
-| `match:pick`     | `{ poolIndex }`          | `Ack`                    | Draft a weapon (slot must still be free)                           |
-| `match:deal-all` | —                        | `Ack`                    | On your pick: deal all remaining weapons at random to both players |
-| `match:aim`      | `{ angle, power }`       | —                        | Live aim, relayed to the opponent                                  |
-| `match:move`     | `{ direction: -1 \| 1 }` | `Ack`                    | Spend a move                                                       |
-| `match:fire`     | `{ angle, power, slot }` | `Ack`                    | Resolve a shot                                                     |
-| `match:rematch`  | —                        | —                        | Vote for a rematch                                                 |
+| Event            | Payload                  | Ack                      | Effect                                                                                                |
+| ---------------- | ------------------------ | ------------------------ | ----------------------------------------------------------------------------------------------------- |
+| `lobby:list`     | —                        | `RoomSummary[]`          | Public, waiting rooms with an online host                                                             |
+| `lobby:create`   | `{ profile, settings }`  | `Ack<RoomJoinedPayload>` | Creates a room, you are the host (0)                                                                  |
+| `lobby:join`     | `{ roomId, profile }`    | `Ack<RoomJoinedPayload>` | Takes the guest seat (1)                                                                              |
+| `lobby:leave`    | —                        | —                        | Leaves deliberately (see lifecycle)                                                                   |
+| `room:start`     | —                        | `Ack`                    | Host only, guest must be connected                                                                    |
+| `session:resume` | `{ token }`              | `Ack<ResumePayload>`     | Reclaims a seat                                                                                       |
+| `match:pick`     | `{ poolIndex }`          | `Ack`                    | Draft a weapon (slot must still be free)                                                              |
+| `match:deal-all` | —                        | `Ack`                    | On your pick: deal all remaining weapons at random to both players                                    |
+| `match:aim`      | `{ angle, power }`       | —                        | Live aim, relayed to the opponent                                                                     |
+| `match:move`     | `{ direction: -1 \| 1 }` | `Ack`                    | Spend a move                                                                                          |
+| `match:fire`     | `{ angle, power, slot }` | `Ack`                    | Resolve a shot                                                                                        |
+| `match:rematch`  | —                        | —                        | Vote for a rematch                                                                                    |
+| `chat:send`      | `{ text }` (1–200 chars) | `Ack`                    | Chat line to everyone in your room; profanity is masked, max one message every 2 s after a burst of 4 |
+| `chat:report`    | `{ messageId }`          | `Ack`                    | Report the opponent's message; the server logs its real text as `chat.reported`                       |
 
 - `profile`: `{ name: 1–16 chars, color: '#rrggbb' }`. A guest whose colour matches the host's
   gets the next free palette colour.
@@ -67,16 +69,17 @@ grace timer, tells the room via `room:updated`, and returns the room plus the cu
 
 ## Server → Client
 
-| Event                     | Payload                    | When                                                     |
-| ------------------------- | -------------------------- | -------------------------------------------------------- |
-| `lobby:rooms`             | `RoomSummary[]`            | The public list changed                                  |
-| `room:updated`            | `{ room: RoomView }`       | Seat taken/freed, connection lost/regained, game started |
-| `room:closed`             | `{ reason }`               | `host-left`, `opponent-left`, `opponent-timed-out`       |
-| `match:started`           | `{ state, you }`           | Match or rematch starts                                  |
-| `match:state`             | `{ state }`                | After a pick or move                                     |
-| `match:aimed`             | `{ player, angle, power }` | Opponent aims                                            |
-| `match:shot`              | `{ player, input, state }` | A shot was resolved                                      |
-| `match:rematch-requested` | `{ player }`               | One player voted for a rematch                           |
+| Event                     | Payload                        | When                                                     |
+| ------------------------- | ------------------------------ | -------------------------------------------------------- |
+| `lobby:rooms`             | `RoomSummary[]`                | The public list changed                                  |
+| `room:updated`            | `{ room: RoomView }`           | Seat taken/freed, connection lost/regained, game started |
+| `room:closed`             | `{ reason }`                   | `host-left`, `opponent-left`, `opponent-timed-out`       |
+| `match:started`           | `{ state, you }`               | Match or rematch starts                                  |
+| `match:state`             | `{ state }`                    | After a pick or move                                     |
+| `match:aimed`             | `{ player, angle, power }`     | Opponent aims                                            |
+| `match:shot`              | `{ player, input, state }`     | A shot was resolved                                      |
+| `match:rematch-requested` | `{ player }`                   | One player voted for a rematch                           |
+| `chat:message`            | `{ id, player, text, sentAt }` | A player in the room sent a chat line (already filtered) |
 
 `RoomView` seats carry `connected` and `reconnectDeadline` (epoch ms), which clients use for
 the "waiting for opponent" countdown.

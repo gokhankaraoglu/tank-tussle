@@ -76,7 +76,9 @@ Rooms are identified by their code; player names and seat tokens are never logge
 named like `token` are redacted even if a caller passes them). Routine refusals ("not your
 turn") are logged at `debug` only. Events: `room.created|joined|left|closed`,
 `match.started|ended|rematch`, `seat.disconnected|resumed|resume-failed`,
-`connection.refused`, `client.throttled`, `client.disconnected`, `request.rejected`.
+`connection.refused`, `client.throttled`, `client.disconnected`, `request.rejected`,
+`chat.reported`. Chat messages themselves are never logged; a reported message is logged with
+its text so it can be reviewed.
 
 ## Protection against floods
 

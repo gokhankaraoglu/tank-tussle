@@ -9,6 +9,7 @@
   airstrike, Rampart wall)
 - Menu built around one-tap play: quick match with computer fallback, an 8-rung ladder against
   the computer, "play with a friend" (same device or online), a remembered player profile
+- Text chat in online rooms and matches: profanity filter, rate limit, mute and report
 - Combo streak: consecutive scoring shots multiply the next one (up to ×1.75)
 - Online play with an authoritative server, rematch and opponent-left handling
 - Public/private rooms with codes and invite links, host-started matches, match length setting

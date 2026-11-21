@@ -67,6 +67,10 @@ export class OnlineGameSession implements GameSession {
     this.listen()
   }
 
+  get chat() {
+    return this.connection.chat
+  }
+
   getSnapshot = (): SessionSnapshot => this.store.get()
   subscribe = (listener: () => void): (() => void) => this.store.subscribe(listener)
 
