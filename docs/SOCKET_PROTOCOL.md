@@ -12,6 +12,10 @@ Clients connect with `auth: { protocolVersion: PROTOCOL_VERSION }`. The server r
 version with the connection error `PROTOCOL_MISMATCH`; the client then stops retrying and shows
 "Server version differs". Bump `PROTOCOL_VERSION` with every change to events or state shapes.
 
+A server at its connection limits refuses with `SERVER_BUSY`; the client treats it like being
+offline and retries with back-off. Requests sent faster than the per-connection rate limit
+are answered with `{ ok: false, error: "Too many requests, slow down" }`.
+
 ## Room lifecycle
 
 ```

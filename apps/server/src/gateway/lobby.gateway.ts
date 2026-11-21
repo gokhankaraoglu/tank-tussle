@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common'
+import type { PlayerIndex } from '@tank-tussle/game-core'
 import {
   ConnectedSocket,
   MessageBody,
@@ -13,8 +14,6 @@ import {
   parseCreateRoom,
   parseJoinRoom,
   parseResume,
-  PROTOCOL_MISMATCH,
-  PROTOCOL_VERSION,
   type Ack,
   type ResumePayload,
   type RoomJoinedPayload,
@@ -22,6 +21,7 @@ import {
 } from '@tank-tussle/protocol'
 import { toAck } from '../common/ack.js'
 import { APP_CONFIG, type AppConfig } from '../config/app-config.js'
+import { GameEventLogger } from '../observability/game-event-logger.js'
 import { MatchesService } from '../matches/matches.service.js'
 import { ReconnectionTimers } from '../rooms/reconnection-timers.js'
 import { toRoomView, type Room } from '../rooms/room.js'
@@ -42,14 +42,11 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
     private readonly matches: MatchesService,
     private readonly timers: ReconnectionTimers,
     @Inject(APP_CONFIG) private readonly config: AppConfig,
+    private readonly events: GameEventLogger,
   ) {}
 
   afterInit(server: GameServer): void {
     this.broadcast = new RoomBroadcaster(server, this.rooms)
-    server.use((socket, next) => {
-      const version: unknown = socket.handshake.auth?.protocolVersion
-      next(version === PROTOCOL_VERSION ? undefined : new Error(PROTOCOL_MISMATCH))
-    })
   }
 
   @SubscribeMessage(ClientEvent.ListRooms)
@@ -66,8 +63,14 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
       const { profile, settings } = parseCreateRoom(body)
       return this.rooms.create(client.id, profile, settings)
     })
-    if (!reply.ok) return reply
-    await client.join(reply.data.room.id)
+    if (!reply.ok) return this.rejected(ClientEvent.CreateRoom, reply)
+    const { room } = reply.data
+    this.events.info('room.created', {
+      room: room.id,
+      visibility: room.settings.visibility,
+      weapons: room.settings.weaponsPerPlayer,
+    })
+    await client.join(room.id)
     this.broadcast.openRooms()
     return { ok: true, data: joinedPayload(reply.data) }
   }
@@ -81,7 +84,8 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
       const { roomId, profile } = parseJoinRoom(body)
       return this.rooms.join(roomId, client.id, profile)
     })
-    if (!reply.ok) return reply
+    if (!reply.ok) return this.rejected(ClientEvent.JoinRoom, reply)
+    this.events.info('room.joined', { room: reply.data.room.id })
     await client.join(reply.data.room.id)
     this.broadcast.roomUpdated(reply.data.room)
     this.broadcast.openRooms()
@@ -90,14 +94,16 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
 
   @SubscribeMessage(ClientEvent.StartMatch)
   startMatch(@ConnectedSocket() client: GameSocket): Ack {
-    return toAck(() => {
+    const reply = toAck(() => {
       const room = this.rooms.start(client.id)
       const state = this.matches.start(room.id, [room.host.profile, room.guest.profile], {
         weaponsPerPlayer: room.settings.weaponsPerPlayer,
       })
       this.broadcast.roomUpdated(room)
       this.broadcast.matchStarted(room, state)
+      this.events.info('match.started', { room: room.id, weapons: room.settings.weaponsPerPlayer })
     })
+    return reply.ok ? reply : this.rejected(ClientEvent.StartMatch, reply)
   }
 
   @SubscribeMessage(ClientEvent.LeaveRoom)
@@ -114,10 +120,14 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
       const { token } = parseResume(body)
       return { token, ...this.rooms.resume(token, client.id) }
     })
-    if (!reply.ok) return reply
+    if (!reply.ok) {
+      this.events.info('seat.resume-failed', { reason: reply.error })
+      return reply
+    }
 
     const { token, room, player, previousSocketId } = reply.data
     this.timers.cancel(token)
+    this.events.info('seat.resumed', { room: room.id, seat: seatName(player) })
     if (previousSocketId) this.server.in(previousSocketId).socketsLeave(room.id)
     await client.join(room.id)
     this.broadcast.roomUpdated(room)
@@ -139,6 +149,11 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
     const result = this.rooms.disconnect(client.id, this.config.reconnectGraceMs)
     if (result?.kind !== 'disconnected') return this.handleDeparture(result, client)
 
+    this.events.info('seat.disconnected', {
+      room: result.room.id,
+      seat: seatName(result.player),
+      graceMs: this.config.reconnectGraceMs,
+    })
     this.timers.schedule(result.token, this.config.reconnectGraceMs, () => {
       void this.handleDeparture(this.rooms.expire(result.token))
     })
@@ -152,12 +167,20 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
   ): Promise<void> {
     if (!result) return
     if (result.kind === 'seat-freed') {
+      this.events.info('room.left', { room: result.room.id })
       await client?.leave(result.room.id)
       this.broadcast.roomUpdated(result.room)
     } else {
+      this.events.info('room.closed', { room: result.room.id, reason: result.reason })
       this.closeRoom(result.room, result)
     }
     this.broadcast.openRooms()
+  }
+
+  /** Expected refusals (full room, wrong code…) are routine: logged only at debug level. */
+  private rejected<T>(event: string, reply: Extract<Ack<T>, { ok: false }>): typeof reply {
+    this.events.debug('request.rejected', { event, reason: reply.error })
+    return reply
   }
 
   private closeRoom(room: Room, result: Extract<DepartureResult, { kind: 'closed' }>): void {
@@ -167,6 +190,8 @@ export class LobbyGateway implements OnGatewayInit, OnGatewayDisconnect {
     this.broadcast.roomClosed(room, result.notify, result.reason)
   }
 }
+
+const seatName = (player: PlayerIndex): string => (player === 0 ? 'host' : 'guest')
 
 const joinedPayload = ({ room, player, token }: JoinResult): RoomJoinedPayload => ({
   room: toRoomView(room),

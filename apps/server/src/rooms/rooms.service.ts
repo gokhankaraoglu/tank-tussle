@@ -23,7 +23,7 @@ import {
 } from './room.js'
 import type { DepartureResult, DisconnectResult, JoinResult } from './room-events.js'
 import { ROOM_REPOSITORY, type RoomRepository } from './room.repository.js'
-import { CLOCK, type Clock } from './tokens.js'
+import { CLOCK, ROOM_LIMIT, type Clock } from './tokens.js'
 
 const DEFAULT_LIST_LIMIT = 10
 const CODE_ALPHABET = 'abcdefghjkmnpqrstuvwxyz23456789'
@@ -34,10 +34,15 @@ export class RoomsService {
   constructor(
     @Inject(ROOM_REPOSITORY) private readonly repository: RoomRepository,
     @Inject(CLOCK) private readonly now: Clock,
+    @Inject(ROOM_LIMIT) private readonly maxRooms: number = Number.POSITIVE_INFINITY,
   ) {}
 
   create(socketId: string, profile: PlayerProfile, settings: RoomSettings): JoinResult {
     this.assertNotSeated(socketId)
+    // Rooms live in memory: a cap keeps a flood of room requests from exhausting it.
+    if (this.repository.findAll().length >= this.maxRooms) {
+      throw new DomainError('The server is busy right now. Try again in a minute.')
+    }
     const host = this.newSeat(socketId, profile)
     const room: Room = {
       id: this.generateCode(),

@@ -110,7 +110,12 @@ MatchGateway ── pick / aim / move / fire / rematch
   functions. Seeds come from the `SEED_SOURCE` token (fixed in tests).
 - Expected failures (`DomainError`, `MatchRuleError`, `InvalidPayloadError`) become
   `{ ok: false, error }` acknowledgements; anything else is logged.
-- `ConfiguredIoAdapter` applies runtime CORS from `AppConfig` (env driven).
+- `ConfiguredIoAdapter` applies runtime CORS and the message size limit from `AppConfig`
+  (env driven).
+- `ConnectionGuardGateway` admits connections (protocol version, per-address and total caps)
+  and rate-limits each socket's messages; `RoomsService` caps the number of rooms.
+- `GameEventLogger` writes one searchable line per important event (rooms, matches, seats,
+  refused and throttled clients) without names or tokens. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
 ## Client (React)
 

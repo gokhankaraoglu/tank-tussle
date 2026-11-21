@@ -33,3 +33,9 @@ services:
         sync: false
       - key: RECONNECT_GRACE_MS
         value: '30000'
+      # Render's proxy sets X-Forwarded-For; needed for per-address connection limits.
+      - key: TRUST_PROXY
+        value: 'true'
+      # error | warn | info | debug. Use debug while hunting a problem.
+      - key: LOG_LEVEL
+        value: info

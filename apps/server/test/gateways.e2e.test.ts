@@ -16,7 +16,7 @@ import {
 import { io, type Socket } from 'socket.io-client'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { AppModule } from '../src/app.module.js'
-import { APP_CONFIG, type AppConfig } from '../src/config/app-config.js'
+import { APP_CONFIG, loadAppConfig, type AppConfig } from '../src/config/app-config.js'
 import { SEED_SOURCE } from '../src/matches/tokens.js'
 
 type Client = Socket<ServerToClientEvents, ClientToServerEvents>
@@ -71,7 +71,12 @@ describe('Lobby and match gateways (e2e)', () => {
   }
 
   beforeEach(async () => {
-    const config: AppConfig = { port: 0, corsOrigin: true, reconnectGraceMs: GRACE_MS }
+    const config: AppConfig = {
+      ...loadAppConfig({}),
+      port: 0,
+      corsOrigin: true,
+      reconnectGraceMs: GRACE_MS,
+    }
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(SEED_SOURCE)
       .useValue(() => 7)

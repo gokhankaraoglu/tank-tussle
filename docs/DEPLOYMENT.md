@@ -27,12 +27,18 @@ download the web client's and the mobile app's dependencies.
 2. When prompted, set `CORS_ORIGIN` to the Netlify site URL (comma-separate several origins).
 3. Deploy. Render injects `PORT`; the health check is `GET /health`.
 
-| Variable             | Default | Purpose                                    |
-| -------------------- | ------- | ------------------------------------------ |
-| `PORT`               | 5001    | Set by Render                              |
-| `CORS_ORIGIN`        | `*`     | Allowed client origins                     |
-| `RECONNECT_GRACE_MS` | 30000   | How long a dropped player keeps their seat |
-| `NODE_VERSION`       | 22      | Node.js 22.12+ is required                 |
+| Variable                 | Default | Purpose                                                        |
+| ------------------------ | ------- | -------------------------------------------------------------- |
+| `PORT`                   | 5001    | Set by Render                                                  |
+| `CORS_ORIGIN`            | `*`     | Allowed client origins                                         |
+| `RECONNECT_GRACE_MS`     | 30000   | How long a dropped player keeps their seat                     |
+| `NODE_VERSION`           | 22      | Node.js 22.12+ is required                                     |
+| `LOG_LEVEL`              | `info`  | `error`, `warn`, `info` or `debug`                             |
+| `TRUST_PROXY`            | `false` | `true` on Render: read the client address from X-Forwarded-For |
+| `MAX_CONNECTIONS`        | 1000    | Open connections in total                                      |
+| `MAX_CONNECTIONS_PER_IP` | 20      | Open connections from one address                              |
+| `MAX_ROOMS`              | 300     | Rooms at the same time                                         |
+| `MAX_PAYLOAD_BYTES`      | 16384   | Largest message a client may send                              |
 
 If the service name `tank-tussle-server` is taken, Render assigns another URL — update
 `VITE_SERVER_URL` in `netlify.toml` to match.
@@ -51,6 +57,46 @@ A CI build without it fails on purpose instead of shipping a client that calls l
 The iOS/Android apps talk to the same server. Build them with `VITE_SERVER_URL` and
 `VITE_PUBLIC_URL` pointing at the deployed server and site, and add `capacitor://localhost` and
 `https://localhost` to `CORS_ORIGIN`. See [MOBILE.md](MOBILE.md).
+
+## Logs
+
+The server writes one line per important event, so Render's **Logs** tab can be searched by
+event name:
+
+```
+room.created room=59ej8r visibility=public weapons=5
+match.started room=59ej8r weapons=5
+seat.disconnected room=59ej8r seat=guest graceMs=30000
+match.ended room=59ej8r result=host score=212-187
+connection.refused reason=too-many-from-address open=20
+client.throttled event=room:start
+```
+
+Rooms are identified by their code; player names and seat tokens are never logged (fields
+named like `token` are redacted even if a caller passes them). Routine refusals ("not your
+turn") are logged at `debug` only. Events: `room.created|joined|left|closed`,
+`match.started|ended|rematch`, `seat.disconnected|resumed|resume-failed`,
+`connection.refused`, `client.throttled`, `client.disconnected`, `request.rejected`.
+
+## Protection against floods
+
+What the server does itself (`apps/server/src/protection`):
+
+- **Message size:** anything above `MAX_PAYLOAD_BYTES` is dropped before it is parsed.
+- **Message rate:** every connection has a token bucket — aim updates 30/s (burst 40), other
+  requests 5/s (burst 15). Throttled requests are answered with "Too many requests" instead of
+  being left hanging; a client throttled 100 times is disconnected.
+- **Connections:** at most `MAX_CONNECTIONS_PER_IP` per address and `MAX_CONNECTIONS` in total;
+  refused connections get `SERVER_BUSY` and the client retries with back-off.
+- **Rooms:** at most `MAX_ROOMS`, so a flood of room requests cannot exhaust memory.
+- **Validation:** every payload goes through the protocol parsers; unknown or malformed input
+  is rejected.
+
+What it cannot do: a network-level flood (many machines, or raw traffic) has to be absorbed
+before it reaches the server. Render's network sits in front of the service; for more, put the
+site and the server behind Cloudflare with a custom domain and enable its rate limiting. The
+per-address limit trusts the first X-Forwarded-For entry, which a client can forge; it is a
+brake on simple scripts, not a security boundary.
 
 ## Things to know
 

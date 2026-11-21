@@ -25,6 +25,12 @@ describe('RoomsService', () => {
   }
 
   describe('lobby', () => {
+    it('refuses new rooms once the limit is reached', () => {
+      const limited = new RoomsService(new InMemoryRoomRepository(), () => now, 1)
+      limited.create('socket-a', alice, publicGame)
+      expect(() => limited.create('socket-b', bob, publicGame)).toThrow('busy')
+    })
+
     it('creates a waiting room with a readable code and a secret seat token', () => {
       const { room, player, token } = rooms.create('s1', alice, publicGame)
       expect(room.id).toMatch(/^[a-z2-9]{6}$/)
