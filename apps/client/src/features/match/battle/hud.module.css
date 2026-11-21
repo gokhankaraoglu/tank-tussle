@@ -1,0 +1,498 @@
+.hud {
+  display: grid;
+  grid-template-columns: 130px 1fr 130px;
+  gap: 12px;
+  align-items: stretch;
+}
+
+@media (max-width: 960px) {
+  .hud {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .controls {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+.card {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--card-color);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  transition: box-shadow 200ms ease;
+}
+
+.card[data-active='true'] {
+  box-shadow:
+    0 0 0 1px var(--card-color),
+    0 0 24px color-mix(in srgb, var(--card-color) 40%, transparent);
+}
+
+.cardName {
+  max-width: 100%;
+  overflow: hidden;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.score {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--card-color);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-areas:
+    'weapon fire'
+    'angle power'
+    'move move';
+  gap: 14px 22px;
+  align-items: end;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+@media (max-width: 700px) {
+  .controls {
+    grid-template-columns: 1fr;
+    grid-template-areas: 'weapon' 'angle' 'power' 'move' 'fire';
+  }
+}
+
+.control {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.controlLabel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 8px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.hint {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  opacity: 0.75;
+}
+
+.muted {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.nudge {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .nudge:hover:not(:disabled) {
+    border-color: var(--accent-2);
+  }
+}
+
+.nudge:disabled,
+.moveButton:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Angle and power */
+.aimField {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.numberWrap {
+  position: relative;
+  display: inline-block;
+  flex: none;
+}
+
+.unit {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+/* Held down to repeat: the browser must not turn the press into a scroll or a text callout. */
+.nudge {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: none;
+}
+
+.slider {
+  flex: 1;
+  min-width: 80px;
+  accent-color: var(--tank-color);
+}
+
+.number {
+  width: 84px;
+  height: 38px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: var(--font-display);
+  padding-right: 18px;
+  font-size: 1.05rem;
+  text-align: right;
+}
+
+/* Weapon picker */
+.picker {
+  position: relative;
+}
+
+.pickerButton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 6px 12px 6px 6px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  text-align: left;
+  cursor: pointer;
+}
+
+@media (hover: hover) {
+  .pickerButton:hover:not(:disabled) {
+    border-color: var(--tank-color);
+  }
+}
+
+.pickerText {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.weaponName {
+  overflow: hidden;
+  color: var(--tank-color);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.caret {
+  color: var(--text-muted);
+}
+
+.arsenal {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 0;
+  z-index: 15;
+  width: min(580px, 90vw);
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.55);
+}
+
+.arsenalHeader {
+  margin: 0 0 10px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.arsenalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arsenalItem {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  width: 100%;
+  padding: 10px 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease;
+}
+
+@media (hover: hover) {
+  .arsenalItem:hover:not(:disabled) {
+    border-color: var(--tank-color);
+    transform: translateY(-2px);
+  }
+}
+
+.arsenalItem:disabled {
+  cursor: default;
+}
+
+.arsenalItem[data-state='selected'] {
+  border-color: var(--tank-color);
+  background: color-mix(in srgb, var(--tank-color) 16%, var(--bg-card));
+  box-shadow: 0 0 0 1px var(--tank-color);
+}
+
+.arsenalItem[data-state='used'] {
+  opacity: 0.4;
+}
+
+.arsenalItem[data-state='used'] img {
+  filter: grayscale(1);
+}
+
+.arsenalName {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.badge {
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.arsenalItem[data-state='selected'] .badge {
+  background: var(--tank-color);
+  color: #10131f;
+}
+
+.emptyIcon {
+  width: 40px;
+  height: 40px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+}
+
+/* Move */
+.move {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.moveButton {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 8px 14px;
+  border: 2px solid var(--accent-2);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent-2) 16%, var(--bg));
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+@media (hover: hover) {
+  .moveButton:hover:not(:disabled) {
+    background: color-mix(in srgb, var(--accent-2) 30%, var(--bg));
+    transform: translateY(-1px);
+  }
+}
+
+.moveLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pips {
+  display: flex;
+  gap: 5px;
+}
+
+.pip {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent-2);
+  box-shadow: 0 0 8px var(--accent-2);
+}
+
+.pip[data-used='true'] {
+  background: transparent;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.fire {
+  grid-area: fire;
+  align-self: stretch;
+  min-width: 120px;
+  min-height: 56px;
+  font-family: var(--font-display);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ---- Compact variants (phone layout) ---- */
+
+.card[data-compact='true'] {
+  gap: 0;
+  padding: 4px 8px;
+  border-top-width: 3px;
+  font-size: 0.8rem;
+}
+
+.card[data-compact='true'] .score {
+  font-size: 1.25rem;
+  line-height: 1.2;
+}
+
+/* Stacked aim field: increase on top, value in the middle, decrease below. No slider. */
+.aimField[data-layout='stack'] {
+  display: grid;
+  grid-template-areas: 'increase' 'value' 'decrease';
+  gap: 4px;
+}
+
+.aimField[data-layout='stack'] .slider {
+  display: none;
+}
+
+.aimField[data-layout='stack'] .nudge {
+  width: 100%;
+  height: clamp(32px, 9dvh, 44px);
+  font-size: 1.3rem;
+}
+
+.aimField[data-layout='stack'] .nudge:first-of-type {
+  grid-area: decrease;
+}
+
+.aimField[data-layout='stack'] .nudge:last-of-type {
+  grid-area: increase;
+}
+
+.aimField[data-layout='stack'] .numberWrap {
+  grid-area: value;
+  display: block;
+}
+
+.aimField[data-layout='stack'] .number {
+  width: 100%;
+  height: clamp(28px, 8dvh, 36px);
+  text-align: center;
+}
+
+.move[data-compact='true'] {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.move[data-compact='true'] .moveLabel {
+  display: none;
+}
+
+.move[data-compact='true'] .moveButton {
+  min-height: clamp(34px, 10dvh, 46px);
+  padding: 4px;
+  font-size: 1.1rem;
+}
+
+.move[data-compact='true'] .pips {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  justify-content: center;
+}
+
+.picker[data-compact='true'] .pickerButton {
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+}
+
+.picker[data-compact='true'] .pickerText .muted {
+  display: none;
+}
+
+/* In the top bar there is no room above the button: show the arsenal as a centred sheet. */
+.picker[data-compact='true'] .arsenal {
+  position: fixed;
+  top: 50%;
+  bottom: auto;
+  left: 50%;
+  width: min(560px, 92vw);
+  max-height: 84dvh;
+  transform: translate(-50%, -50%);
+}
+
+.moveButton,
+.pickerButton,
+.arsenalItem {
+  touch-action: manipulation;
+}
+
+.combo {
+  padding: 0 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent-strong);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.arsenalItem :global(span[class*='traits']) {
+  justify-content: center;
+}

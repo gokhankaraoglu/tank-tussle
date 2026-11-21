@@ -1,0 +1,33 @@
+{
+  "name": "@tank-tussle/client",
+  "version": "0.1.0",
+  "private": true,
+  "description": "React + TypeScript client: menus, weapon shop and canvas renderer",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "icons": "node scripts/render-icons.mjs",
+    "sounds": "node scripts/synth-sounds.mjs"
+  },
+  "dependencies": {
+    "@fontsource/audiowide": "^5.3.0",
+    "@fontsource/exo-2": "^5.3.0",
+    "@tank-tussle/client-core": "0.1.0",
+    "@tank-tussle/game-core": "0.1.0",
+    "@tank-tussle/protocol": "0.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "socket.io-client": "^4.8.4"
+  },
+  "devDependencies": {
+    "@types/react": "~19.2.0",
+    "@types/react-dom": "~19.2.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "vite": "^8.3.5",
+    "vite-plugin-pwa": "^2.0.0"
+  }
+}

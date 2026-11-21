@@ -1,0 +1,197 @@
+.layout {
+  display: grid;
+  grid-template-columns: 200px 1fr 200px;
+  gap: 16px;
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: max(24px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pool {
+    grid-column: 1 / -1;
+    grid-row: 1;
+  }
+}
+
+.header {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.turn {
+  color: var(--picker-color);
+  font-weight: 700;
+}
+
+.pool {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  align-content: start;
+}
+
+.weapon {
+  display: grid;
+  gap: 4px;
+  min-height: 92px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg-card);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease;
+}
+
+@media (hover: hover) {
+  .weapon:hover:not(:disabled) {
+    border-color: var(--picker-color);
+    transform: translateY(-2px);
+  }
+}
+
+.weapon:disabled {
+  cursor: default;
+}
+
+.weapon[data-state='open']:disabled {
+  opacity: 0.75;
+}
+
+.weapon[data-state='taken'] {
+  border-color: color-mix(in srgb, var(--owner-color) 60%, var(--border));
+  background: color-mix(in srgb, var(--owner-color) 10%, var(--bg));
+  opacity: 0.55;
+}
+
+.weapon[data-state='taken'] img {
+  filter: grayscale(0.7);
+}
+
+.owner {
+  color: var(--owner-color);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.weaponHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.weaponTitle {
+  display: grid;
+  gap: 2px;
+}
+
+.weaponName {
+  font-weight: 700;
+}
+
+.description {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.rating {
+  color: var(--accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+
+.inventory {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--owner-color);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+.inventoryTitle {
+  margin: 0 0 6px;
+  font-weight: 700;
+  color: var(--owner-color);
+}
+
+.items {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--text-muted);
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 26px;
+}
+
+.emptySlot {
+  color: color-mix(in srgb, var(--text-muted) 60%, transparent);
+  font-style: italic;
+}
+
+.slotDot {
+  width: 24px;
+  height: 24px;
+  border: 1px dashed var(--border);
+  border-radius: 6px;
+}
+
+.inventory[data-picking='true'] {
+  box-shadow:
+    0 0 0 1px var(--owner-color),
+    0 0 20px color-mix(in srgb, var(--owner-color) 35%, transparent);
+}
+
+/* Phones held sideways: keep the three columns, just narrower. Must come after the width rule. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .layout {
+    grid-template-columns: 150px 1fr 150px;
+    gap: 10px;
+    padding-top: max(8px, env(safe-area-inset-top));
+  }
+
+  .pool {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
+}

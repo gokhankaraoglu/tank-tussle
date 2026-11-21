@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Tank Tussle: two tanks square off on a hill; their shells meet in the middle. -->
+  <!-- shell trails -->
+  <g fill="none" stroke="#ffe066" stroke-width="16" stroke-linecap="round" stroke-dasharray="4 40">
+    <path d="M430 420 Q450 290 486 250"/>
+    <path d="M594 420 Q574 290 538 250"/>
+  </g>
+  <!-- clash -->
+  <path d="M512 92 L538 160 L604 132 L576 198 L644 224 L576 250 L604 316 L538 288 L512 356 L486 288 L420 316 L448 250 L380 224 L448 198 L420 132 L486 160 Z" fill="#ffe066" stroke="#f5a623" stroke-width="10" stroke-linejoin="round"/>
+  <circle cx="512" cy="224" r="40" fill="#fff6c9"/>
+  <!-- hill -->
+  <path d="M64 790 Q512 650 960 790 L960 880 Q512 770 64 880 Z" fill="#4cc35a"/>
+  <!-- left tank -->
+  <g transform="translate(266 762) rotate(-8)">
+    <path d="M48 -180 L196 -292" stroke="#b8482a" stroke-width="38" stroke-linecap="round"/>
+    <path d="M-140 -64 L140 -64 L102 -130 L-110 -130 Z" fill="#ff7849" stroke="#a23f22" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M-74 -130 L76 -130 L90 -172 L44 -208 L-52 -208 L-84 -172 Z" fill="#ffa07a" stroke="#a23f22" stroke-width="10" stroke-linejoin="round"/>
+    <rect x="-152" y="-72" width="304" height="76" rx="38" fill="#22252f"/>
+    <g fill="#9097ab">
+      <circle cx="-108" cy="-34" r="23"/><circle cx="-36" cy="-32" r="21"/>
+      <circle cx="36" cy="-32" r="21"/><circle cx="108" cy="-34" r="23"/>
+    </g>
+  </g>
+  <!-- right tank (mirrored) -->
+  <g transform="translate(758 762) scale(-1 1) rotate(-8)">
+    <path d="M48 -180 L196 -292" stroke="#1c9cc4" stroke-width="38" stroke-linecap="round"/>
+    <path d="M-140 -64 L140 -64 L102 -130 L-110 -130 Z" fill="#3ddcff" stroke="#1787a8" stroke-width="10" stroke-linejoin="round"/>
+    <path d="M-74 -130 L76 -130 L90 -172 L44 -208 L-52 -208 L-84 -172 Z" fill="#9aeeff" stroke="#1787a8" stroke-width="10" stroke-linejoin="round"/>
+    <rect x="-152" y="-72" width="304" height="76" rx="38" fill="#22252f"/>
+    <g fill="#9097ab">
+      <circle cx="-108" cy="-34" r="23"/><circle cx="-36" cy="-32" r="21"/>
+      <circle cx="36" cy="-32" r="21"/><circle cx="108" cy="-34" r="23"/>
+    </g>
+  </g>
+</svg>

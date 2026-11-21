@@ -1,0 +1,26 @@
+{
+  "name": "@tank-tussle/protocol",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Typed Socket.IO contract and payload validation shared by server and client",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tank-tussle/game-core": "0.1.0"
+  }
+}

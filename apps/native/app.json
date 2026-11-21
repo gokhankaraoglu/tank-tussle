@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Tank Tussle",
+    "slug": "tank-tussle",
+    "version": "0.1.0",
+    "orientation": "landscape",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.gokhankaraoglu.tanktussle.rn",
+      "requireFullScreen": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#070b1d",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "package": "com.gokhankaraoglu.tanktussle.rn"
+    },
+    "plugins": ["expo-audio", "expo-font", "expo-asset"],
+    "backgroundColor": "#070b1d",
+    "newArchEnabled": true
+  }
+}

@@ -1,0 +1,261 @@
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: min(760px, 100%);
+}
+
+.identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+}
+
+.pill[data-status='connected'] .dot {
+  background: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+
+.pill[data-status='reconnecting'] .dot,
+.pill[data-status='connecting'] .dot {
+  background: #ffd84f;
+  animation: blink 1s ease-in-out infinite;
+}
+
+.pill[data-status='offline'] .dot {
+  background: var(--danger);
+}
+
+.hub {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  width: min(760px, 100%);
+}
+
+@media (max-width: 640px) {
+  .hub {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-elevated);
+}
+
+.wide {
+  grid-column: 1 / -1;
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.muted {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.codeForm {
+  display: flex;
+  gap: 8px;
+}
+
+.codeInput {
+  flex: 1;
+  min-width: 0;
+  min-height: 48px;
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.roomList {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.roomRow {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+}
+
+.form,
+.room {
+  display: grid;
+  gap: 22px;
+}
+
+.field {
+  display: grid;
+  gap: 10px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chips {
+  display: flex;
+  gap: 8px;
+}
+
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.code {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 18px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+}
+
+.codeValue {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 8vw, 2.8rem);
+  letter-spacing: 0.3em;
+  color: var(--accent-2);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--accent-2) 50%, transparent);
+}
+
+.seats {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 480px) {
+  .seats {
+    grid-template-columns: 1fr;
+  }
+}
+
+.versus {
+  font-family: var(--font-display);
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.seat {
+  display: grid;
+  gap: 4px;
+  min-height: 108px;
+  align-content: center;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-top: 4px solid var(--seat-color, var(--border));
+  border-radius: var(--radius);
+  background: var(--bg);
+}
+
+.seatEmpty {
+  border-style: dashed;
+  justify-items: center;
+}
+
+.seatRole {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.seatName {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--seat-color);
+}
+
+.seatState {
+  font-size: 0.85rem;
+  color: var(--success);
+}
+
+.seatState[data-connected='false'] {
+  color: #ffd84f;
+}
+
+.pulse {
+  color: var(--text-muted);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse,
+  .pill .dot {
+    animation: none;
+  }
+}

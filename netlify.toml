@@ -1,0 +1,35 @@
+# Netlify configuration for the React client. The game server runs on Render (see render.yaml).
+[build]
+  # Build from the repo root so npm installs the whole workspace.
+  base = "/"
+  command = "npm run build:packages && npm run build -w @tank-tussle/client"
+  publish = "apps/client/dist"
+  # Skip deploys when nothing the client depends on has changed.
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- apps/client packages package.json package-lock.json tsconfig.base.json netlify.toml"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Baked into the bundle at build time. Must match the Render service URL.
+  VITE_SERVER_URL = "https://tank-tussle-server.onrender.com"
+
+# The service worker and manifest must always be fresh, or installed copies never update.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Vite fingerprints everything under /assets, so it can be cached forever.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/sounds/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

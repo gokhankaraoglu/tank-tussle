@@ -1,0 +1,91 @@
+:root {
+  --bg: #070b1d;
+  --bg-elevated: #10163a;
+  --bg-card: #161e4a;
+  --border: #2a3577;
+  --text: #e9ecff;
+  --text-muted: #9aa3d6;
+  --accent: #ff7849;
+  --accent-strong: #ff9a6e;
+  --accent-2: #3ddcff;
+  --danger: #ff5e7a;
+  --success: #6dff9e;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font-display: 'Audiowide', system-ui, sans-serif;
+  --font-body: 'Exo 2', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overscroll-behavior: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-text-size-adjust: 100%;
+  background:
+    radial-gradient(ellipse at top, #1b2470 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg) 0%, #03050f 100%);
+  color: var(--text);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.8em;
+  padding: 0.1em 0.45em;
+  border: 1px solid var(--border);
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  font-family: var(--font-body);
+  font-size: 0.85em;
+  text-align: center;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+/* Inside the iOS/Android app the page should feel like an app, not a document. */
+.native-app body {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.native-app input {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Keyboard shortcuts mean nothing on a phone: hide the key hints there. */
+@media (hover: none) and (pointer: coarse) {
+  kbd {
+    display: none;
+  }
+}

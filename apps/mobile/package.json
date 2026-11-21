@@ -1,0 +1,24 @@
+{
+  "name": "@tank-tussle/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Native iOS and Android shells (Capacitor) around the web client",
+  "type": "module",
+  "scripts": {
+    "sync": "cap sync",
+    "ios": "cap open ios",
+    "android": "cap open android",
+    "run:ios": "cap run ios",
+    "run:android": "cap run android",
+    "assets": "node scripts/render-logo.mjs && capacitor-assets generate --ios --android --iconBackgroundColor '#0b1026' --iconBackgroundColorDark '#0b1026' --splashBackgroundColor '#070b1d' --splashBackgroundColorDark '#070b1d'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/core": "^8.6.0",
+    "@capacitor/ios": "^8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^4.0.0",
+    "@capacitor/cli": "^8.6.0"
+  }
+}

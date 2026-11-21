@@ -1,0 +1,34 @@
+{
+  "name": "@tank-tussle/client-core",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Platform-free client logic shared by the web and React Native apps: sessions, networking, screen flow, shot playback and the battlefield renderer",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tank-tussle/game-core": "0.1.0",
+    "@tank-tussle/protocol": "0.1.0",
+    "socket.io-client": "^4.8.4"
+  },
+  "peerDependencies": {
+    "react": ">=19"
+  },
+  "devDependencies": {
+    "@types/react": "~19.1.10"
+  }
+}

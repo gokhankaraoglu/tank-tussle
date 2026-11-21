@@ -1,0 +1,10 @@
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+.env
+.env.local
+.DS_Store
+
+# Rendered from apps/mobile/assets/logo.svg by `npm run assets -w @tank-tussle/mobile`
+apps/mobile/assets/*.png

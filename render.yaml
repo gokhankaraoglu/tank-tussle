@@ -1,0 +1,28 @@
+# Render Blueprint for the game server. Create it with: Dashboard → New → Blueprint → this repo.
+# The client is deployed separately on Netlify (see netlify.toml).
+services:
+  - type: web
+    name: tank-tussle-server
+    runtime: node
+    plan: free
+    # Build from the repo root so the workspace packages (game-core, protocol) are available.
+    buildCommand: npm ci && npm run build:packages && npm run build -w @tank-tussle/server
+    startCommand: npm start
+    healthCheckPath: /health
+    # Only redeploy when something the server depends on changes.
+    buildFilter:
+      paths:
+        - apps/server/**
+        - packages/**
+        - package.json
+        - package-lock.json
+        - tsconfig.base.json
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      # The Netlify site URL, e.g. https://tank-tussle.netlify.app (comma-separate several).
+      # For the mobile apps also allow: capacitor://localhost,https://localhost
+      - key: CORS_ORIGIN
+        sync: false
+      - key: RECONNECT_GRACE_MS
+        value: '30000'

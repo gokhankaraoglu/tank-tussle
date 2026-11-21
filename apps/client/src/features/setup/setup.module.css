@@ -1,0 +1,44 @@
+.form {
+  display: grid;
+  gap: 24px;
+}
+
+.player {
+  display: grid;
+  gap: 16px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+
+.playerTitle {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+}
+
+.level {
+  display: grid;
+  gap: 12px;
+}
+
+.levelRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.levelRow input {
+  flex: 1;
+  accent-color: var(--accent);
+}
+
+.levelValue {
+  min-width: 7ch;
+  font-family: var(--font-display);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}

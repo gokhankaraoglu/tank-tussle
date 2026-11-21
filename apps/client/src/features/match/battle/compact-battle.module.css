@@ -1,0 +1,180 @@
+/* Phone layout, landscape. Everything fits one screen; nothing scrolls. */
+.layout {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr) 112px;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'top top top'
+    'left field right';
+  gap: 6px 8px;
+  height: 100dvh;
+  padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+    max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.top {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+}
+
+.status {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.weapon {
+  flex: 0 1 240px;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.exit {
+  min-height: 40px;
+  padding: 6px 12px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hint {
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+/* The battlefield keeps its 5:3 shape and is as large as the middle cell allows. */
+.fieldCell {
+  grid-area: field;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  container-type: size;
+}
+
+.fieldBox {
+  width: min(100cqw, 100cqh * 5 / 3);
+}
+
+.fire {
+  flex: 1;
+  min-height: 52px;
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rotateHint {
+  display: none;
+}
+
+/* Very short landscape screens (small phones with browser bars): tighten the side panels. */
+@media (orientation: landscape) and (max-height: 360px) {
+  .layout {
+    grid-template-columns: 104px minmax(0, 1fr) 104px;
+    gap: 4px 8px;
+  }
+
+  .top {
+    min-height: 34px;
+  }
+
+  .side {
+    gap: 4px;
+  }
+
+  .side :global(button) {
+    min-height: 0;
+  }
+
+  .label {
+    display: none;
+  }
+
+  .fire {
+    min-height: 40px;
+  }
+}
+
+/* Upright phones: field across the top, the two control panels side by side below it. */
+@media (orientation: portrait) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto;
+    grid-template-areas:
+      'top top'
+      'field field'
+      'hint hint'
+      'left right';
+    align-content: start;
+    gap: 8px 10px;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .top {
+    flex-wrap: wrap;
+  }
+
+  .weapon {
+    order: 3;
+    flex: 1 1 100%;
+  }
+
+  .fieldCell {
+    container-type: normal;
+  }
+
+  .fieldBox {
+    width: 100%;
+  }
+
+  .rotateHint {
+    grid-area: hint;
+    display: block;
+    margin: -2px 0 0;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-align: center;
+  }
+
+  .fire {
+    min-height: 64px;
+  }
+}

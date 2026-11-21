@@ -1,0 +1,47 @@
+{
+  "name": "tank-tussle",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Tank Tussle, an artillery duel game — NestJS server, React web client, React Native app, shared TypeScript game engine",
+  "type": "module",
+  "workspaces": [
+    "packages/game-core",
+    "packages/protocol",
+    "packages/client-core",
+    "apps/server",
+    "apps/client",
+    "apps/mobile",
+    "apps/native"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "scripts": {
+    "build:packages": "npm run build -w @tank-tussle/game-core && npm run build -w @tank-tussle/protocol && npm run build -w @tank-tussle/client-core",
+    "build": "npm run build:packages && npm run build -w @tank-tussle/server && npm run build -w @tank-tussle/client",
+    "dev": "npm run build:packages && concurrently -k -n core,protocol,client-core,server,client -c gray,gray,gray,blue,magenta \"npm run build -w @tank-tussle/game-core -- --watch --preserveWatchOutput\" \"npm run build -w @tank-tussle/protocol -- --watch --preserveWatchOutput\" \"npm run build -w @tank-tussle/client-core -- --watch --preserveWatchOutput\" \"npm run dev -w @tank-tussle/server\" \"npm run dev -w @tank-tussle/client\"",
+    "start": "npm run start -w @tank-tussle/server",
+    "test": "npm run build:packages && npm test --workspaces --if-present",
+    "typecheck": "npm run build:packages && npm run typecheck --workspaces --if-present",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "mobile:sync": "npm run build:packages && npm run build -w @tank-tussle/client && npm run sync -w @tank-tussle/mobile",
+    "mobile:ios": "npm run mobile:sync && npm run ios -w @tank-tussle/mobile",
+    "mobile:android": "npm run mobile:sync && npm run android -w @tank-tussle/mobile",
+    "native:ios": "npm run build:packages && npm run ios -w @tank-tussle/native",
+    "native:android": "npm run build:packages && npm run android -w @tank-tussle/native"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
+    "concurrently": "^10.0.6",
+    "eslint": "^10.14.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "react": "19.1.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5"
+  }
+}

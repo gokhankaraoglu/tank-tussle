@@ -1,0 +1,33 @@
+{
+  "name": "@tank-tussle/server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Authoritative NestJS game server: lobby, rooms and match sessions over Socket.IO",
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json && concurrently -k -r \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch-path=dist --watch-path=../../packages/game-core/dist --watch-path=../../packages/protocol/dist --enable-source-maps dist/main.js\"",
+    "start": "node --enable-source-maps dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.3.2",
+    "@nestjs/core": "^12.3.2",
+    "@nestjs/platform-express": "^12.3.2",
+    "@nestjs/platform-socket.io": "^12.3.2",
+    "@nestjs/websockets": "^12.3.2",
+    "@tank-tussle/game-core": "0.1.0",
+    "@tank-tussle/protocol": "0.1.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2",
+    "socket.io": "^4.8.4"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "^12.3.2",
+    "@swc/core": "^1.16.21",
+    "socket.io-client": "^4.8.4",
+    "unplugin-swc": "^2.0.0",
+    "concurrently": "^10.0.6"
+  }
+}
