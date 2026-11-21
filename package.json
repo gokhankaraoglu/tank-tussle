@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "description": "Tank Tussle, an artillery duel game — NestJS server, React web client, React Native app, shared TypeScript game engine",
+  "license": "UNLICENSED",
   "type": "module",
   "workspaces": [
     "packages/game-core",

@@ -78,3 +78,9 @@ docs/                architecture, guidelines, protocol, weapons, roadmap
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the pieces fit together and
 [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for deploying to Render (server) and Netlify (client).
+
+## License
+
+Copyright (c) 2026 Gökhan Karaoğlu. All rights reserved. The code, graphics, sounds and music
+may not be used, copied, modified or distributed without written permission; see
+[LICENSE](LICENSE).

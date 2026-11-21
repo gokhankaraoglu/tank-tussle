@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "Authoritative NestJS game server: lobby, rooms and match sessions over Socket.IO",
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "build": "tsc -p tsconfig.build.json",

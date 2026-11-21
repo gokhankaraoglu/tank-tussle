@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "description": "React + TypeScript client: menus, weapon shop and canvas renderer",
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "vite",

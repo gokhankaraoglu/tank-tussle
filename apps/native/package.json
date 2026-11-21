@@ -31,6 +31,7 @@
   },
   "private": true,
   "description": "React Native (Expo) app for iOS and Android: native UI on the shared engine, sessions and renderer",
+  "license": "UNLICENSED",
   "expo": {
     "install": {
       "exclude": [
