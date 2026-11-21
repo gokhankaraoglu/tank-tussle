@@ -167,8 +167,9 @@ fire / completeShot / rematch` and read a `SessionSnapshot` via `useSyncExternal
   fanfare). Every sound is synthesised from code by `apps/client/scripts/synth-sounds.mjs`
   (`npm run sounds -w @tank-tussle/client`): effects as WAV, music as AAC — no recordings. Mute / music preferences live
   in `AudioSettingsStore` (localStorage).
-- **Weapon lists.** The shop keeps every pool slot in place and shows who took it
-  (`shop.takenBy`); the battle picker groups the arsenal (held + `spent`) into
+- **Weapon lists.** The shop groups copies of a weapon into one card (`buildShopCatalog`):
+  weapons on offer first, strongest first, sold-out ones last with who took them, and a Leave
+  button that asks before ending the match; the battle picker groups the arsenal (held + `spent`) into
   selected / ready / used entries. The HUD remembers the chosen weapon by id, not by slot.
 - **Aiming input.** `Battlefield` turns pointer drags into aim (`drag-aim.ts`: direction →
   elevation relative to the hull, distance → power) and wheel steps into angle/power nudges;

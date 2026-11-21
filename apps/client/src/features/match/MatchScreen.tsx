@@ -79,6 +79,7 @@ export const MatchScreen = ({ session, onExit }: MatchScreenProps) => {
           canPick={localPlayer !== null}
           onPick={(index) => session.pick(index)}
           onDealAll={() => session.dealAll()}
+          onLeave={() => setConfirmingExit(true)}
         />
       )}
 

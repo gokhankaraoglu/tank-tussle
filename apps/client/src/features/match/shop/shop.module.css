@@ -28,6 +28,18 @@
   gap: 12px;
 }
 
+.heading {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+  min-width: 0;
+}
+
+.progress {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
 .title {
   margin: 0;
   font-family: var(--font-display);
@@ -50,7 +62,7 @@
   padding: 0;
   list-style: none;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 10px;
   align-content: start;
 }
@@ -86,8 +98,7 @@
 }
 
 .weapon[data-state='taken'] {
-  border-color: color-mix(in srgb, var(--owner-color) 60%, var(--border));
-  background: color-mix(in srgb, var(--owner-color) 10%, var(--bg));
+  background: var(--bg);
   opacity: 0.55;
 }
 
@@ -105,15 +116,42 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+}
+
+.count {
+  flex: none;
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--picker-color) 22%, var(--bg));
+  font-size: 0.8rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.count[data-sold-out='true'] {
+  background: var(--bg);
+  color: var(--text-muted);
+}
+
+.owners {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
 }
 
 .weaponTitle {
   display: grid;
   gap: 2px;
+  min-width: 0;
 }
 
 .weaponName {
+  overflow: hidden;
   font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .description {
@@ -160,16 +198,22 @@
   min-height: 26px;
 }
 
+.itemName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.itemCount {
+  color: var(--owner-color);
+  font-weight: 700;
+}
+
 .emptySlot {
   color: color-mix(in srgb, var(--text-muted) 60%, transparent);
   font-style: italic;
-}
-
-.slotDot {
-  width: 24px;
-  height: 24px;
-  border: 1px dashed var(--border);
-  border-radius: 6px;
 }
 
 .inventory[data-picking='true'] {
