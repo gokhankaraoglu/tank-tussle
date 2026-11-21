@@ -9,6 +9,9 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # Netlify passes these to its `npm install`: only the web client's workspaces, so the mobile
+  # app's heavy dependencies (Expo, React Native, Skia) are not downloaded on every build.
+  NPM_FLAGS = "--include-workspace-root -w @tank-tussle/game-core -w @tank-tussle/protocol -w @tank-tussle/client-core -w @tank-tussle/client"
   # Baked into the bundle at build time. Must match the Render service URL.
   VITE_SERVER_URL = "https://tank-tussle-server.onrender.com"
 
