@@ -6,7 +6,14 @@ services:
     runtime: node
     plan: free
     # Build from the repo root so the workspace packages (game-core, protocol) are available.
-    buildCommand: npm ci && npm run build:packages && npm run build -w @tank-tussle/server
+    # Install only what the server needs: the web client and the mobile app have heavy
+    # dependencies (Vite, Expo, React Native, Skia) that would slow the build down for nothing.
+    buildCommand: >-
+      npm ci --include-workspace-root
+      -w @tank-tussle/game-core -w @tank-tussle/protocol -w @tank-tussle/server
+      && npm run build -w @tank-tussle/game-core
+      && npm run build -w @tank-tussle/protocol
+      && npm run build -w @tank-tussle/server
     startCommand: npm start
     healthCheckPath: /health
     # Only redeploy when something the server depends on changes.

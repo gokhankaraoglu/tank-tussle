@@ -13,6 +13,8 @@ The server and the client deploy separately, both **from the repository root**:
 which are npm workspaces, not published packages. Pointing a host at `apps/server` or
 `apps/client` alone breaks the install. Both configs therefore build from the root and compile
 the shared packages first (`npm run build:packages`) — their `dist/` folders are not committed.
+The server build installs only the server's workspaces (`npm ci -w …`), so Render does not
+download the web client's and the mobile app's dependencies.
 
 ## 1. Server on Render
 
@@ -61,7 +63,9 @@ The iOS/Android apps talk to the same server. Build them with `VITE_SERVER_URL` 
 The same commands the hosts run:
 
 ```bash
-npm ci && npm run build:packages && npm run build -w @tank-tussle/server && npm start
+npm ci --include-workspace-root -w @tank-tussle/game-core -w @tank-tussle/protocol -w @tank-tussle/server
+npm run build -w @tank-tussle/game-core && npm run build -w @tank-tussle/protocol
+npm run build -w @tank-tussle/server && npm start
 ```
 
 ```bash
