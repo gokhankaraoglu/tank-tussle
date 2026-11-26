@@ -221,6 +221,10 @@ export class SkiaCanvas2D implements Canvas2D {
     this.canvas.clear(Skia.Color('transparent'))
   }
 
+  measureText(text: string): { readonly width: number } {
+    return { width: parseFont(this.state.font).measureText(text).width }
+  }
+
   fillText(text: string, x: number, y: number): void {
     const font = parseFont(this.state.font)
     const align = this.state.textAlign

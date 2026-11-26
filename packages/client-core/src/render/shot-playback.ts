@@ -6,7 +6,8 @@ const EXPLOSION_TICKS = 24
 const DUST_TICKS = 36
 const FLASH_TICKS = 7
 const RECOIL_TICKS = 16
-const POPUP_TICKS = 60
+/** How long a score pop-up stays: long enough to read, even after the shot itself is over. */
+const POPUP_TICKS = 110
 const TRAIL_TICKS = 14
 /** Keep animating after the last projectile so explosions can finish. */
 const LINGER_TICKS = 40
@@ -80,8 +81,14 @@ export class ShotPlayback {
     return this.shot.result.events.filter((event) => event.tick > fromTick && event.tick <= toTick)
   }
 
+  /** Over once explosions have settled and every score pop-up has been on screen in full. */
   isFinished(tick: number): boolean {
-    return tick >= this.shot.result.ticks + LINGER_TICKS
+    const lastScore = Math.max(
+      -POPUP_TICKS,
+      ...this.damageEvents.map((event) => event.tick),
+      ...this.stealEvents.map((event) => event.tick),
+    )
+    return tick >= Math.max(this.shot.result.ticks + LINGER_TICKS, lastScore + POPUP_TICKS)
   }
 
   frameAt(tick: number): PlaybackFrame {
@@ -158,14 +165,16 @@ export class ShotPlayback {
     const gains = visible(this.damageEvents).map((event) => ({
       x: event.x,
       y: event.y - 24,
-      text: event.direct ? `DIRECT HIT +${event.points}` : `+${event.points}`,
+      points: `+${event.points}`,
+      label: event.direct ? 'DIRECT HIT' : null,
       color: this.playerColors[event.scorer],
       progress: (tick - event.tick) / POPUP_TICKS,
     }))
     const thefts = visible(this.stealEvents).map((event) => ({
       x: event.x,
       y: event.y - 48,
-      text: `STOLEN −${event.points}`,
+      points: `−${event.points}`,
+      label: 'STOLEN',
       color: this.playerColors[event.scorer],
       progress: (tick - event.tick) / POPUP_TICKS,
     }))

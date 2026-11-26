@@ -38,7 +38,10 @@ export interface MuzzleFlash {
 export interface ScorePopup {
   readonly x: number
   readonly y: number
-  readonly text: string
+  /** The number itself, e.g. `+42` or `−12`. */
+  readonly points: string
+  /** Small caption above the number (`DIRECT HIT`, `STOLEN`), or null. */
+  readonly label: string | null
   readonly color: string
   readonly progress: number
 }

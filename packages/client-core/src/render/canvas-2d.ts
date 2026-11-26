@@ -43,6 +43,7 @@ export interface Canvas2D {
   fillRect(x: number, y: number, width: number, height: number): void
   clearRect(x: number, y: number, width: number, height: number): void
   fillText(text: string, x: number, y: number): void
+  measureText(text: string): { readonly width: number }
   drawImage(image: LayerImage, x: number, y: number, width: number, height: number): void
 
   createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradientLike

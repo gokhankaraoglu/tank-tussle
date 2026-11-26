@@ -56,6 +56,41 @@ describe('ShotPlayback', () => {
     expect(playback.isFinished(shot.result.ticks + 1000)).toBe(true)
   })
 
+  it('keeps a late score pop-up on screen until it has been shown in full', () => {
+    const lastTick = shot.result.ticks
+    const scored = new ShotPlayback(
+      {
+        ...shot,
+        result: {
+          ...shot.result,
+          events: [
+            ...shot.result.events,
+            {
+              kind: 'damage',
+              tick: lastTick,
+              victim: 1,
+              scorer: 0,
+              points: 42,
+              direct: true,
+              x: 500,
+              y: 300,
+            },
+          ],
+        },
+      },
+      state.terrain,
+      ['#ff0000', '#0000ff'],
+      [state.tanks[0].x, state.tanks[1].x],
+    )
+
+    expect(scored.frameAt(lastTick).popups).toEqual([
+      expect.objectContaining({ points: '+42', label: 'DIRECT HIT', color: '#ff0000' }),
+    ])
+    expect(scored.isFinished(lastTick + 60)).toBe(false)
+    expect(scored.frameAt(lastTick + 60).popups).toHaveLength(1)
+    expect(scored.isFinished(lastTick + 200)).toBe(true)
+  })
+
   it('converts elapsed seconds to simulation ticks', () => {
     expect(playback.tickAt(1)).toBe(60)
   })
