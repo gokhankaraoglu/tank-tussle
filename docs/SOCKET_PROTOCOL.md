@@ -54,7 +54,7 @@ grace timer, tells the room via `room:updated`, and returns the room plus the cu
 | `match:pick`     | `{ poolIndex }`          | `Ack`                    | Draft a weapon (slot must still be free)                                                              |
 | `match:deal-all` | —                        | `Ack`                    | On your pick: deal all remaining weapons at random to both players                                    |
 | `match:aim`      | `{ angle, power }`       | —                        | Live aim, relayed to the opponent                                                                     |
-| `match:move`     | `{ direction: -1 \| 1 }` | `Ack`                    | Spend a move                                                                                          |
+| `match:move`     | `{ direction: -1 \| 1 }` | `Ack`                    | Spend a move; rejected if a wall, steep slope or cliff blocks the way                                 |
 | `match:fire`     | `{ angle, power, slot }` | `Ack`                    | Resolve a shot                                                                                        |
 | `match:rematch`  | —                        | —                        | Vote for a rematch                                                                                    |
 | `chat:send`      | `{ text }` (1–200 chars) | `Ack`                    | Chat line to everyone in your room; profanity is masked, max one message every 2 s after a burst of 4 |

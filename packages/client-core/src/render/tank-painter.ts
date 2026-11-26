@@ -10,6 +10,7 @@ import {
 import type { Canvas2D } from './canvas-2d.js'
 import { shade } from './color.js'
 import { drawHalo } from './effects-painter.js'
+import type { TankMotionLook } from './tank-motion.js'
 
 export interface TankLook {
   /** 1 when the tank faces right (towards an enemy on its right), -1 when it faces left. */
@@ -18,6 +19,8 @@ export interface TankLook {
   /** 0–1: how far the barrel is pushed back by the last shot. */
   readonly recoil: number
   readonly time: number
+  /** Rolling tracks and hull bounce while driving. */
+  readonly motion: TankMotionLook
 }
 
 const TRACK = '#22252f'
@@ -26,6 +29,7 @@ const WHEEL = '#9097ab'
 const WHEEL_HUB = '#4b5062'
 const ROAD_WHEELS = [-13, -6.5, 0, 6.5, 13] as const
 const RECOIL_DISTANCE = 6
+const LINK_SPACING = 3.2
 
 /**
  * Draws a tank resting on the slope under it. Hull, tracks and turret lean with the ground; the
@@ -43,13 +47,20 @@ export const drawTank = (
 
   // The active tank glows; a gradient halo, not shadowBlur (see drawHalo).
   if (look.active) drawHalo(ctx, pose.center.x, pose.center.y, 8, 40, tank.color, 0.45)
+  // Tracks roll with the ground; in the mirrored hull frame "forward" flips with the facing.
+  const roll = look.motion.rolled * look.facing
   withHullFrame(ctx, pose, look.facing, () => {
     drawShadow(ctx)
+    ctx.translate(0, look.motion.bob)
     drawHull(ctx, tank.color)
-    drawTracks(ctx)
+    ctx.translate(0, -look.motion.bob)
+    drawTracks(ctx, roll)
   })
   drawBarrel(ctx, pose, angle, tank.color, look.recoil)
-  withHullFrame(ctx, pose, look.facing, () => drawTurret(ctx, tank.color, look.time))
+  withHullFrame(ctx, pose, look.facing, () => {
+    ctx.translate(0, look.motion.bob)
+    drawTurret(ctx, tank.color, look.time)
+  })
   drawLabel(ctx, tank, pose, look)
 }
 
@@ -70,23 +81,32 @@ const drawShadow = (ctx: Canvas2D): void => {
   ctx.fill()
 }
 
-const drawTracks = (ctx: Canvas2D): void => {
+/** `roll`: distance the tracks have travelled, in hull coordinates (+ = forward). */
+const drawTracks = (ctx: Canvas2D, roll: number): void => {
   const half = TANK.halfTrack + 4
   ctx.fillStyle = TRACK
   ctx.beginPath()
   ctx.roundRect(-half, -10, half * 2, 10, 5)
   ctx.fill()
 
-  // Track links along the bottom run.
+  // Track links: the bottom run stays on the ground while the hull drives over it, so relative
+  // to the hull it moves backwards; the top run moves forwards.
   ctx.fillStyle = TRACK_LINK
-  for (let x = -half + 3; x < half - 2; x += 3.2) ctx.fillRect(x, -1.6, 1.6, 1.6)
+  const offset = ((roll % LINK_SPACING) + LINK_SPACING) % LINK_SPACING
+  for (let x = -half + 3 - offset; x < half - 2; x += LINK_SPACING) {
+    if (x > -half + 1) ctx.fillRect(x, -1.6, 1.6, 1.6)
+  }
+  for (let x = -half + 3 + offset - LINK_SPACING; x < half - 2; x += LINK_SPACING) {
+    if (x > -half + 1) ctx.fillRect(x, -10, 1.6, 1.4)
+  }
 
   // Drive sprocket and idler at the ends, road wheels between them.
-  for (const x of [-half + 5, half - 5]) drawWheel(ctx, x, -5, 4)
-  for (const x of ROAD_WHEELS) drawWheel(ctx, x, -4, 3)
+  for (const x of [-half + 5, half - 5]) drawWheel(ctx, x, -5, 4, roll)
+  for (const x of ROAD_WHEELS) drawWheel(ctx, x, -4, 3, roll)
 }
 
-const drawWheel = (ctx: Canvas2D, x: number, y: number, radius: number): void => {
+/** A wheel with a notch on its hub, so it can be seen turning as the tank drives. */
+const drawWheel = (ctx: Canvas2D, x: number, y: number, radius: number, roll: number): void => {
   ctx.fillStyle = WHEEL
   ctx.beginPath()
   ctx.arc(x, y, radius, 0, Math.PI * 2)
@@ -95,6 +115,13 @@ const drawWheel = (ctx: Canvas2D, x: number, y: number, radius: number): void =>
   ctx.beginPath()
   ctx.arc(x, y, radius * 0.4, 0, Math.PI * 2)
   ctx.fill()
+  const turn = roll / radius
+  ctx.fillRect(
+    x + Math.cos(turn) * radius * 0.65 - 0.6,
+    y + Math.sin(turn) * radius * 0.65 - 0.6,
+    1.2,
+    1.2,
+  )
 }
 
 /** Front (+x) has a sloped glacis; a side skirt covers the top of the tracks. */

@@ -4,13 +4,13 @@ import { simulateShot, type ShotInput, type ShotResult } from '../simulation/sho
 import {
   clampAngle,
   clampPower,
-  clampTankX,
   createTank,
   opponentOf,
   type PlayerIndex,
   type TankState,
 } from '../tank/tank.js'
-import { flatLayers } from '../terrain/terrain.js'
+import { drive, DRIVE_STOP_MESSAGES } from '../tank/drive.js'
+import { flatLayers, Terrain } from '../terrain/terrain.js'
 import { generateTerrain } from '../terrain/terrain-generator.js'
 import type { WeaponRegistry } from '../weapons/registry.js'
 import type { WeaponId } from '../weapons/types.js'
@@ -153,6 +153,10 @@ export const aimTank = (
   }))
 }
 
+/**
+ * Drives the tank on turn up to one move's distance. It stops early at walls, steep slopes and
+ * cliffs; a move that cannot gain a single pixel is refused and does not use up a move.
+ */
 export const moveTank = (
   state: MatchState,
   player: PlayerIndex,
@@ -162,9 +166,13 @@ export const moveTank = (
   const tank = state.tanks[player]
   if (tank.movesLeft <= 0) throw new MatchRuleError('No moves left')
 
+  const route = drive(tank.x, direction, TANK.moveDistance, Terrain.fromLayers(state.terrain))
+  if (route.distance === 0) {
+    throw new MatchRuleError(DRIVE_STOP_MESSAGES[route.stoppedBy ?? 'edge'])
+  }
   return updateTank(state, player, (current) => ({
     ...current,
-    x: clampTankX(current.x + direction * TANK.moveDistance),
+    x: route.x,
     movesLeft: current.movesLeft - 1,
   }))
 }

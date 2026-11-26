@@ -4,6 +4,7 @@ import {
   hudPlayerOf,
   matchKindOf,
   matchMusic,
+  moveBlocks,
   slopeInfo,
   statusLine,
   useSessionSnapshot,
@@ -95,6 +96,7 @@ export const MatchScreen = ({ session, onExit }: MatchScreenProps) => {
               <MoveControl
                 movesLeft={tank.movesLeft}
                 disabled={disabled}
+                blocked={moveBlocks(state, hudPlayer)}
                 onMove={(direction) => controls?.move(direction)}
               />
             </View>

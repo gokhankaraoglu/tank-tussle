@@ -320,8 +320,9 @@
 /* Move */
 .move {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 6px 10px;
 }
 
 .moveButton {
@@ -495,4 +496,27 @@
 
 .arsenalItem :global(span[class*='traits']) {
   justify-content: center;
+}
+
+/* A direction the tank cannot drive (wall, steep slope, cliff): striped, with the reason below. */
+.moveButton[data-blocked='true'] {
+  border-style: dashed;
+  background: repeating-linear-gradient(
+    135deg,
+    transparent 0 6px,
+    color-mix(in srgb, var(--text-muted) 14%, transparent) 6px 12px
+  );
+}
+
+.moveHint {
+  flex-basis: 100%;
+  color: var(--warning);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.move[data-compact='true'] .moveHint {
+  grid-column: 1 / -1;
+  font-size: 0.65rem;
 }

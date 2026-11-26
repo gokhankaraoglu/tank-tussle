@@ -108,8 +108,11 @@ describe('LocalGameSession', () => {
 
   it('reports rule violations as errors instead of throwing', () => {
     const { session } = createSession('practice', 'practice')
-    for (let i = 0; i < 5; i++) session.move(1)
-    expect(session.getSnapshot().error).toBe('No moves left')
+    // Five moves are one too many; on this map a steep slope may refuse one even earlier.
+    expect(() => {
+      for (let i = 0; i < 5; i++) session.move(1)
+    }).not.toThrow()
+    expect(session.getSnapshot().error).toEqual(expect.any(String))
   })
 
   it('starts a fresh match on rematch and cancels pending CPU turns', () => {

@@ -1,4 +1,4 @@
-import { AIM_STEPS, roundAim } from '@tank-tussle/client-core'
+import { AIM_STEPS, roundAim, type MoveBlocks } from '@tank-tussle/client-core'
 import { comboMultiplier, TANK, type MatchState, type PlayerIndex } from '@tank-tussle/game-core'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { holdAcceleration, useClickSound, useHoldRepeat } from '../app/hooks'
@@ -86,26 +86,41 @@ const Nudge = ({ label, icon, disabled, onPressIn, onPressOut }: NudgeProps) => 
 interface MoveControlProps {
   readonly movesLeft: number
   readonly disabled: boolean
+  /** Walls, steep slopes or cliffs in the way; that direction's button is disabled. */
+  readonly blocked?: MoveBlocks
   readonly onMove: (direction: -1 | 1) => void
 }
 
-export const MoveControl = ({ movesLeft, disabled, onMove }: MoveControlProps) => {
+const FREE: MoveBlocks = { left: null, right: null }
+
+export const MoveControl = ({ movesLeft, disabled, blocked = FREE, onMove }: MoveControlProps) => {
   const click = useClickSound()
-  const blocked = disabled || movesLeft <= 0
-  const button = (direction: -1 | 1) => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={direction < 0 ? 'Move left' : 'Move right'}
-      disabled={blocked}
-      onPress={() => {
-        click()
-        onMove(direction)
-      }}
-      style={({ pressed }) => [styles.move, pressed && styles.pressed, blocked && styles.disabled]}
-    >
-      <Text style={styles.moveIcon}>{direction < 0 ? '◀' : '▶'}</Text>
-    </Pressable>
-  )
+  const unavailable = disabled || movesLeft <= 0
+  const hint = blocked.left ?? blocked.right
+  const button = (direction: -1 | 1) => {
+    const reason = direction < 0 ? blocked.left : blocked.right
+    const off = unavailable || reason !== null
+    const label = direction < 0 ? 'Move left' : 'Move right'
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={reason ? `${label}: ${reason}` : label}
+        disabled={off}
+        onPress={() => {
+          click()
+          onMove(direction)
+        }}
+        style={({ pressed }) => [
+          styles.move,
+          pressed && styles.pressed,
+          off && styles.disabled,
+          reason !== null && styles.moveBlocked,
+        ]}
+      >
+        <Text style={styles.moveIcon}>{direction < 0 ? '◀' : '▶'}</Text>
+      </Pressable>
+    )
+  }
   return (
     <View style={styles.moveBox}>
       <View style={styles.moveRow}>
@@ -117,6 +132,7 @@ export const MoveControl = ({ movesLeft, disabled, onMove }: MoveControlProps) =
           <View key={index} style={[styles.pip, index >= movesLeft && styles.pipUsed]} />
         ))}
       </View>
+      {hint && !unavailable ? <Text style={styles.moveHint}>{hint}</Text> : null}
     </View>
   )
 }
@@ -194,6 +210,8 @@ const styles = StyleSheet.create({
   moveIcon: { color: colors.text, fontSize: 15 },
   pips: { flexDirection: 'row', justifyContent: 'center', gap: 5 },
   pip: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.secondary },
+  moveBlocked: { borderStyle: 'dashed', borderColor: colors.muted },
+  moveHint: { color: colors.warning, fontSize: 10, fontWeight: '600', textAlign: 'center' },
   pipUsed: { backgroundColor: 'transparent', borderWidth: 1, borderColor: colors.border },
   card: {
     minWidth: 96,

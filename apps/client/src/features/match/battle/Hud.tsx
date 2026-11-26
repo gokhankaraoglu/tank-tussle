@@ -2,7 +2,7 @@ import { AIM, type MatchState, type PlayerIndex, type WeaponRegistry } from '@ta
 import type { ReactNode } from 'react'
 import { Button } from '../../../shared/ui/Button.js'
 import { AimField } from './AimField.js'
-import { slopeInfo } from '@tank-tussle/client-core'
+import { moveBlocks, slopeInfo } from '@tank-tussle/client-core'
 import { MoveControl } from './MoveControl.js'
 import { PlayerCard } from './PlayerCard.js'
 import type { BattleControls } from '@tank-tussle/client-core'
@@ -72,6 +72,7 @@ export const Hud = ({ state, registry, player, slot, controls }: HudProps) => {
           <MoveControl
             movesLeft={tank.movesLeft}
             disabled={disabled}
+            blocked={moveBlocks(state, player)}
             onMove={(direction) => controls?.move(direction)}
           />
         </Control>

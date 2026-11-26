@@ -2,7 +2,7 @@ import { AIM } from '@tank-tussle/game-core'
 import { SoundControls } from '../../../audio/SoundControls.js'
 import { Button } from '../../../shared/ui/Button.js'
 import { AimField } from './AimField.js'
-import { slopeInfo } from '@tank-tussle/client-core'
+import { moveBlocks, slopeInfo } from '@tank-tussle/client-core'
 import type { BattleViewProps } from './battle-view.js'
 import { Battlefield } from './Battlefield.js'
 import { FullscreenButton } from './FullscreenButton.js'
@@ -86,6 +86,7 @@ export const CompactBattle = ({
           compact
           movesLeft={tank.movesLeft}
           disabled={disabled}
+          blocked={moveBlocks(state, hudPlayer)}
           onMove={(direction) => controls?.move(direction)}
         />
       </aside>

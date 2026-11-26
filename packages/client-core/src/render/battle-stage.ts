@@ -1,7 +1,15 @@
-import type { PlayerIndex, ShotEvent, WeaponId } from '@tank-tussle/game-core'
+import {
+  Terrain,
+  type PlayerIndex,
+  type ShotEvent,
+  type TankState,
+  type TerrainLayers,
+  type WeaponId,
+} from '@tank-tussle/game-core'
 import type { SessionSnapshot } from '../session/game-session.js'
 import type { RenderScene } from './render-scene.js'
 import { ShotPlayback } from './shot-playback.js'
+import { TankMotion } from './tank-motion.js'
 
 export interface StageView {
   readonly snapshot: SessionSnapshot
@@ -33,6 +41,8 @@ export class BattleStage {
   private active: ActivePlayback | null = null
   /** A shot whose replay ended; the snapshot may still carry it for a frame or two. */
   private finishedShot: number | null = null
+  private readonly motion = new TankMotion()
+  private terrainView: { layers: TerrainLayers; view: Terrain } | null = null
 
   constructor(private readonly startedAt: number) {}
 
@@ -40,22 +50,25 @@ export class BattleStage {
     const { snapshot, aimingPlayer, dragging } = view
     const { state, pendingShot } = snapshot
     const canAim = aimingPlayer !== null && !pendingShot
+    const active = this.playbackFor(snapshot, now)
+    // Moves are animated as a drive; during a shot playback positions follow the replay.
+    const motion = this.motion.frame(state, this.viewOf(state.terrain), now, active === null)
     const base: RenderScene = {
       terrain: state.terrain,
-      tanks: state.tanks,
+      tanks: withX(state.tanks, motion.x),
       activePlayer: state.phase === 'playing' && !pendingShot ? state.turn : null,
       aimGuide: canAim && aimingPlayer !== null ? { player: aimingPlayer, dragging } : null,
       projectiles: [],
       trails: [],
       explosions: [],
-      dustClouds: [],
+      dustClouds: motion.dust,
       muzzleFlashes: [],
       recoil: [0, 0],
+      motion: motion.looks,
       popups: [],
       time: (now - this.startedAt) / 1000,
     }
 
-    const active = this.playbackFor(snapshot, now)
     if (!active) return base
 
     const tick = active.playback.tickAt((now - active.startedAt) / 1000)
@@ -71,6 +84,13 @@ export class BattleStage {
     const { tankX, ...frame } = active.playback.frameAt(tick)
     const tanks = state.tanks.map((tank, index) => ({ ...tank, x: tankX[index] ?? tank.x }))
     return { ...base, ...frame, tanks: tanks as unknown as RenderScene['tanks'] }
+  }
+
+  private viewOf(layers: TerrainLayers): Terrain {
+    if (this.terrainView?.layers !== layers) {
+      this.terrainView = { layers, view: Terrain.fromLayers(layers) }
+    }
+    return this.terrainView.view
   }
 
   private playbackFor(snapshot: SessionSnapshot, now: number): ActivePlayback | null {
@@ -93,3 +113,14 @@ export class BattleStage {
     return this.active
   }
 }
+
+const withX = (
+  tanks: readonly [TankState, TankState],
+  x: readonly [number, number],
+): readonly [TankState, TankState] =>
+  tanks[0].x === x[0] && tanks[1].x === x[1]
+    ? tanks
+    : [
+        { ...tanks[0], x: x[0] },
+        { ...tanks[1], x: x[1] },
+      ]

@@ -16,6 +16,8 @@
 - Reconnection: seats survive drops and page reloads for a grace period
 - Visual weapon picker with icons and used/remaining states, one-click random deal for the whole draft, 0.1-precision power
 - Detailed tanks that lean with the slope; barrel range depends on the tilt
+- Realistic driving: tanks stop at walls, too-steep slopes and cliffs (the HUD shows why), with
+  animated glides, rolling tracks, dust and a jolt at obstacles
 - Accuracy-based scoring with direct-hit bonus; weapon damages balanced by simulation
 - Harder landscapes (mountain, twin peaks, mesa, canyon) and loose dirt that slides
 - Mobile web: touch layout for both orientations, installable offline PWA, fullscreen button

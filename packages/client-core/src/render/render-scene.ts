@@ -1,3 +1,4 @@
+import type { TankMotionLook } from './tank-motion.js'
 import type {
   PlayerIndex,
   ProjectileFrame,
@@ -62,6 +63,8 @@ export interface RenderScene {
   readonly muzzleFlashes: readonly MuzzleFlash[]
   /** 0–1 barrel recoil per player. */
   readonly recoil: readonly [number, number]
+  /** Rolling tracks and hull bounce per player, while (and after) driving. */
+  readonly motion: readonly [TankMotionLook, TankMotionLook]
   readonly popups: readonly ScorePopup[]
   /** Seconds since the renderer started; drives idle animations. */
   readonly time: number

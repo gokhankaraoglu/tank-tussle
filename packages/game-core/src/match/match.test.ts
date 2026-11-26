@@ -3,7 +3,7 @@ import { AIM, TANK } from '../constants.js'
 import { createDefaultWeaponRegistry } from '../weapons/registry.js'
 import { barrelDirection } from '../tank/tank.js'
 import { tankPose } from '../tank/tank-pose.js'
-import { Terrain } from '../terrain/terrain.js'
+import { flatLayers, Terrain } from '../terrain/terrain.js'
 import { MatchRuleError } from './errors.js'
 import {
   aimTank,
@@ -20,6 +20,12 @@ import {
 import type { MatchState } from './types.js'
 
 const registry = createDefaultWeaponRegistry()
+
+/** The same match on hand-made ground, so movement tests do not depend on the generated map. */
+const withGround = (state: MatchState, height: (column: number) => number): MatchState => ({
+  ...state,
+  terrain: flatLayers(state.terrain.heights.map((_, column) => height(column))),
+})
 const players = [
   { name: 'Alice', color: '#ff0000' },
   { name: 'Bob', color: '#0000ff' },
@@ -132,10 +138,20 @@ describe('enableAutoPick', () => {
 
 describe('turns', () => {
   it('moves the active tank and spends a move', () => {
-    const state = finishShop(newVersus())
+    const state = withGround(finishShop(newVersus()), () => 200)
     const moved = moveTank(state, 0, 1)
     expect(moved.tanks[0].x).toBeCloseTo(state.tanks[0].x + TANK.moveDistance)
     expect(moved.tanks[0].movesLeft).toBe(state.tanks[0].movesLeft - 1)
+  })
+
+  it('refuses a move that cannot gain a single pixel and keeps the move', () => {
+    const state = finishShop(newVersus())
+    const x = state.tanks[0].x
+    // Flat ground with a sheer wall touching the tank's front track.
+    const wallAt = Math.floor(x + TANK.halfTrack + 1)
+    const walled = withGround(state, (column) => (column >= wallAt ? 280 : 200))
+    expect(() => moveTank(walled, 0, 1)).toThrow('A wall is in the way')
+    expect(walled.tanks[0].movesLeft).toBe(state.tanks[0].movesLeft)
   })
 
   it('rejects actions from the waiting player', () => {
@@ -154,7 +170,10 @@ describe('turns', () => {
   })
 
   it('keeps the elevation when the tank moves, so the barrel leans with the new slope', () => {
-    const state = finishShop(newVersus())
+    // Flat where the tank stands, then a gentle rise it can drive onto.
+    const start = finishShop(newVersus())
+    const rise = Math.floor(start.tanks[0].x) + 30
+    const state = withGround(start, (column) => 200 + Math.max(0, column - rise) * 0.4)
     const before = barrelDirection(state.tanks[0], Terrain.fromLayers(state.terrain))
     const moved = moveTank(moveTank(state, 0, 1), 0, 1)
     expect(moved.tanks[0].angle).toBe(state.tanks[0].angle)

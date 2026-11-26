@@ -69,6 +69,17 @@ cache and expo-audio.
   real tank: when the hull leans, the barrel leans with it (world angle = tilt + elevation) and
   shells leave from the tilted turret pivot. Driving onto a slope therefore changes where the
   barrel points; the HUD shows the tilt and the resulting world angle.
+- **Tanks drive like tanks.** `moveTank` drives up to `TANK.moveDistance` one pixel at a time
+  through `drive()` (`tank/drive.ts`) and stops early at a wall (a step over `maxStep` 6px), a
+  slope steeper than `maxClimb` 32° up / `maxDescent` 40° down, a cliff (a drop over `maxDrop`
+  14px) or the field edge. A move that gets nowhere is rejected and not spent
+  (`DRIVE_STOP_MESSAGES`); the HUD asks `moveBlocks()` to disable a blocked direction and show
+  why. Over 200 generated maps no tank starts boxed in on both sides.
+- **Movement is animated on the client only.** `TankMotion` (`client-core/render/tank-motion.ts`)
+  glides the drawn tank from the old to the new x with ease-in-out, rolls the wheels and track
+  links, bobs the hull, kicks up dust behind the tracks and jolts the tank when it stops at an
+  obstacle. Shots and teleports snap. Rules stay instant, so web and native get the same
+  animation without any protocol change.
 - **Scoring.** `damage × closeness^1.5`, plus 50% for a blast centred on the tank (a direct
   hit). Weapon damages are tuned with a simulation over 80 maps so that a good player's average
   per shot follows the weapon's star rating (≈25 for 1★ up to ≈50 for 5★). Consecutive scoring

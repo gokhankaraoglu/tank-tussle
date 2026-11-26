@@ -1,4 +1,6 @@
 import {
+  drive,
+  DRIVE_STOP_MESSAGES,
   tankPose,
   Terrain,
   worldAngle,
@@ -58,4 +60,20 @@ const WAITING_SCREENS: ReadonlySet<Screen['name']> = new Set(['room', 'resuming'
 export const screenMusic = (screen: Screen): MusicTrack | undefined => {
   if (screen.name === 'match') return undefined
   return WAITING_SCREENS.has(screen.name) ? 'waiting' : 'menu'
+}
+
+/** Why the tank cannot drive left or right right now; null where it can. */
+export interface MoveBlocks {
+  readonly left: string | null
+  readonly right: string | null
+}
+
+/** Checks one pixel each way with the engine's own rule, so buttons match what a move would do. */
+export const moveBlocks = (state: MatchState, player: PlayerIndex): MoveBlocks => {
+  const terrain = Terrain.fromLayers(state.terrain)
+  const reason = (direction: -1 | 1): string | null => {
+    const route = drive(state.tanks[player].x, direction, 1, terrain)
+    return route.distance === 0 ? DRIVE_STOP_MESSAGES[route.stoppedBy ?? 'edge'] : null
+  }
+  return { left: reason(-1), right: reason(1) }
 }

@@ -28,6 +28,14 @@ export const TANK = {
   /** Steepest slope a tank can sit on, in degrees. */
   maxTilt: 40,
   moveDistance: 36,
+  /** Steepest slope (degrees, over the track length) a tank can drive up. */
+  maxClimb: 32,
+  /** Steepest slope it will drive down; beyond this it would tip over, so it stops. */
+  maxDescent: 40,
+  /** Highest vertical step (pixels) the tracks can climb, like a kerb or a crater lip. */
+  maxStep: 6,
+  /** Deepest sheer drop (pixels) it will drive off; anything deeper is a cliff edge. */
+  maxDrop: 14,
   movesPerMatch: 4,
 } as const
 

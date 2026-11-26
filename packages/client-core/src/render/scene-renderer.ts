@@ -13,6 +13,8 @@ import { drawAimGuide, drawTank } from './tank-painter.js'
 import { TerrainPainter } from './terrain-painter.js'
 import type { Canvas2D, LayerFactory } from './canvas-2d.js'
 
+const STILL = { rolled: 0, bob: 0 } as const
+
 /**
  * Draws a RenderScene onto a 2D context whose units are world pixels (the caller scales the
  * context to the screen). Knows nothing about rules, sessions or the platform it runs on.
@@ -46,6 +48,7 @@ export class SceneRenderer {
         active: scene.activePlayer === index,
         recoil: scene.recoil[index] ?? 0,
         time: scene.time,
+        motion: scene.motion[index] ?? STILL,
       })
     })
     if (scene.aimGuide) {
